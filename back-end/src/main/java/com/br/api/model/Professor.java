@@ -2,6 +2,7 @@ package com.br.api.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.br.CPF;
@@ -15,10 +16,16 @@ public class Professor {
     @Column(name = "id_professor")
     @Getter @Setter private int id_professor;
 
+    @NotBlank
+    @Column(name = "nome_professor")
+    @Getter @Setter private String nome;
+
+    @NotBlank
     @Column(name = "cpf")
     @CPF
     @Getter @Setter private String cpf;
 
+    @NotBlank
     @Column(name = "rg")
     @Getter @Setter private String rg;
 
@@ -36,6 +43,6 @@ public class Professor {
     @Getter @Setter private String status;
 
     @ManyToOne
-    @JoinColumn(name = "id_disciplina")
-    private Disciplina disciplina;
+    @JoinColumn(name = "disciplinas_id_disciplina")
+    @Getter @Setter private Disciplina disciplina;
 }

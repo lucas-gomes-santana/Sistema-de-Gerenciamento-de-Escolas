@@ -1,5 +1,7 @@
 package com.br.api.dto.aluno;
 
+import com.br.api.dto.turma.TurmaDTO;
+
 public record AlunoDetalhesDTO(
      Long id,
      String nome,

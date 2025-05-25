@@ -2,6 +2,7 @@ package com.br.api.mapper;
 
 import com.br.api.dto.aluno.*;
 import com.br.api.model.Aluno;
+import com.br.api.dto.turma.TurmaDTO;
 
 public class AlunoMapper {
 
@@ -16,7 +17,7 @@ public class AlunoMapper {
 
     public AlunoDetalhesDTO toDetalhesDTO(Aluno aluno) {
         return new AlunoDetalhesDTO (
-                aluno.getId_aluno(),
+                (long) aluno.getId_aluno(),
                 aluno.getNome_aluno(),
                 aluno.getCpf(),
                 aluno.getRg(),
