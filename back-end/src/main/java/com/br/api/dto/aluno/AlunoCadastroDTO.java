@@ -17,7 +17,7 @@ public record AlunoCadastroDTO(
 
         String telefone,
 
-        @Email(message = "Formato de E-mail inválido!")
+        @Email(message = "Formato de email inválido!")
         String email,
 
         @NotNull(message = "ID da turma do aluno é obrigatório")

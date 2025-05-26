@@ -9,8 +9,6 @@ public record TurmaCadastroDTO(
     String nome,
 
     @NotBlank(message = "Obrigatório inserir o turno!")
-    String turno,
+    String turno
 
-    @NotBlank(message = "Obrigatório inserir o ano letivo!")
-    String ano_letivo
 ) {  }

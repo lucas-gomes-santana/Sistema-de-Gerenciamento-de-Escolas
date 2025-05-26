@@ -24,7 +24,7 @@ DROP TABLE IF EXISTS `aluno`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `aluno` (
   `id_aluno` int NOT NULL,
-  `nome_aluno` varchar(45) NOT NULL,
+  `nome_aluno` text NOT NULL,
   `cpf` varchar(20) NOT NULL,
   `rg` varchar(20) NOT NULL,
   `id_endereco` int NOT NULL,
@@ -32,8 +32,6 @@ CREATE TABLE `aluno` (
   `email` varchar(30) DEFAULT NULL,
   `status` varchar(15) DEFAULT NULL,
   `id_turma` int NOT NULL,
-  `data_criacao` datetime DEFAULT CURRENT_TIMESTAMP,
-  `data_atualizacao` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id_aluno`),
   UNIQUE KEY `id_aluno_UNIQUE` (`id_aluno`),
   UNIQUE KEY `rg_UNIQUE` (`rg`),
@@ -123,7 +121,7 @@ DROP TABLE IF EXISTS `disciplinas`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `disciplinas` (
   `id_disciplinas` int NOT NULL,
-  `nome_disciplina` varchar(45) NOT NULL,
+  `nome_disciplina` text NOT NULL,
   PRIMARY KEY (`id_disciplinas`),
   UNIQUE KEY `id_disciplinas_UNIQUE` (`id_disciplinas`),
   UNIQUE KEY `nome_disciplina_UNIQUE` (`nome_disciplina`)
@@ -139,11 +137,11 @@ DROP TABLE IF EXISTS `endereco`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `endereco` (
   `id_endereco` int NOT NULL,
-  `rua` varchar(45) DEFAULT NULL,
-  `bairro` varchar(20) DEFAULT NULL,
-  `cep` varchar(10) DEFAULT NULL,
-  `povoado` varchar(30) DEFAULT NULL,
-  `complemento` varchar(45) DEFAULT NULL,
+  `rua` text DEFAULT NULL,
+  `bairro` text DEFAULT NULL,
+  `cep` varchar(15) DEFAULT NULL,
+  `povoado` text DEFAULT NULL,
+  `complemento` text DEFAULT NULL,
   `tipo_entidade` enum('professor','aluno') NOT NULL,
   `id_entidade` int NOT NULL,
   PRIMARY KEY (`id_endereco`),
@@ -165,8 +163,7 @@ CREATE TABLE `frequencia` (
   `id_aluno` int NOT NULL,
   `id_disciplina` int NOT NULL,
   `id_turma` int NOT NULL,
-  `data_aula` date NOT NULL,
-  `presente` tinyint(1) NOT NULL DEFAULT '0',
+  `presenca` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id_frequencia`),
   UNIQUE KEY `idx_frequencia_unica` (`id_aluno`,`id_disciplina`,`id_turma`,`data_aula`),
   KEY `id_disciplina` (`id_disciplina`),
@@ -190,7 +187,6 @@ CREATE TABLE `login` (
   `nome_usuario` varchar(45) NOT NULL,
   `id_usuario` int NOT NULL,
   `senha` varchar(255) NOT NULL,
-  `salt` varchar(64) NOT NULL,
   `data_criacao` datetime DEFAULT CURRENT_TIMESTAMP,
   `ultimo_login` datetime DEFAULT NULL,
   PRIMARY KEY (`idlogin`),
@@ -209,15 +205,13 @@ DROP TABLE IF EXISTS `professor`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `professor` (
   `id_professor` int NOT NULL,
-  `nome_professor` varchar(45) NOT NULL,
+  `nome_professor` text NOT NULL,
   `cpf` varchar(20) NOT NULL,
   `rg` varchar(20) NOT NULL,
-  `telefone` varchar(15) NOT NULL,
+  `telefone` varchar(25) NOT NULL,
   `email` varchar(30) DEFAULT NULL,
-  `status` varchar(15) DEFAULT NULL,
+  `status` text DEFAULT NULL,
   `disciplinas_id_disciplinas` int NOT NULL,
-  `data_criacao` datetime DEFAULT CURRENT_TIMESTAMP,
-  `data_atualizacao` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id_professor`,`disciplinas_id_disciplinas`),
   UNIQUE KEY `id_professor_UNIQUE` (`id_professor`),
   UNIQUE KEY `cpf_UNIQUE` (`cpf`),
@@ -235,11 +229,12 @@ DROP TABLE IF EXISTS `responsaveis`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `responsaveis` (
   `id_responsaveis` int NOT NULL,
-  `nome` varchar(45) NOT NULL,
+  `nome_responsavel` text NOT NULL,
   `cpf` varchar(20) NOT NULL,
-  `telefone` varchar(15) NOT NULL,
+  `telefone` varchar(25) NOT NULL,
   `rg` varchar(20) NOT NULL,
   PRIMARY KEY (`id_responsaveis`),
+  UNIQUE KEY `id_responsaveis_UNIQUE` (`id_responsaveis`),
   UNIQUE KEY `cpf_UNIQUE` (`cpf`),
   UNIQUE KEY `rg_UNIQUE` (`rg`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
@@ -254,11 +249,8 @@ DROP TABLE IF EXISTS `turma`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `turma` (
   `id_turma` int NOT NULL,
-  `nome` varchar(35) DEFAULT NULL,
-  `turno` varchar(10) DEFAULT NULL,
-  `ano_letivo` varchar(45) DEFAULT NULL,
-  `data_criacao` datetime DEFAULT CURRENT_TIMESTAMP,
-  `data_atualizacao` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `nome_turma` text DEFAULT NULL,
+  `turno` text DEFAULT NULL,
   PRIMARY KEY (`id_turma`),
   UNIQUE KEY `id_turma_UNIQUE` (`id_turma`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
@@ -274,9 +266,6 @@ DROP TABLE IF EXISTS `turma_disciplina_professor`;
 CREATE TABLE `turma_disciplina_professor` (
   `id_turma` int NOT NULL,
   `id_disciplinas` int NOT NULL,
-  `ano_letivo` int DEFAULT NULL,
-  `dia_aula` varchar(15) DEFAULT NULL,
-  `horario` time DEFAULT NULL,
   `id_professor` int NOT NULL,
   KEY `fk_turma_disciplina_professor_turma1_idx` (`id_turma`),
   KEY `fk_turma_disciplina_professor_disciplinas1_idx` (`id_disciplinas`),
@@ -287,6 +276,17 @@ CREATE TABLE `turma_disciplina_professor` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+DROP TABLE IF EXISTS `eventos`;
+
+CREATE TABLE `eventos` (
+  `id_evento` int NOT NULL,
+  `nome_evento` text NOT NULL,
+  `tema` text DEFAULT NULL,
+  `descricao` text DEFAULT NULL,
+  PRIMARY KEY (`id_evento`),
+  PRIMARY KEY `id_evento_UNIQUE` (`id_evento`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

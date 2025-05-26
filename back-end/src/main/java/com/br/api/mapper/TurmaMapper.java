@@ -10,15 +10,13 @@ public class TurmaMapper {
         return new TurmaDTO(
             turma.getId_turma(),
             turma.getTurno(),
-            turma.getNome_turma(),
-            turma.getAno_letivo()
+            turma.getNome_turma()
         );
     }
 
     public Turma toEntity(TurmaCadastroDTO dto) {
         Turma turma = new Turma();
         turma.setNome_turma(dto.nome());
-        turma.setAno_letivo(dto.ano_letivo());
         turma.setTurno(dto.turno());
     }
 }

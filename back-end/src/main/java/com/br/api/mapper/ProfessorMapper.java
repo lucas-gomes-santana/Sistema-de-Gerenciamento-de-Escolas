@@ -11,7 +11,7 @@ public class ProfessorMapper {
             professor.getCpf(),
             professor.getRg(),
             professor.getEmail(),
-            professor.getTelefone(),
+            professor.getTelefone()
         );
     }
 }
