@@ -1,25 +1,32 @@
 package com.br.api.model;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "tuma")
+@Table(name = "turma")
+@Getter
+@Setter
 public class Turma {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_turma")
-    @Getter @Setter private int id_turma;
+    private int id_turma;
 
     @NotBlank
-    @Column(name = "nome")
-    @Getter @Setter private String nome_turma;
+    @Column(name = "nome_turma")
+    private String nome_turma;
 
     @NotBlank
     @Column(name = "turno")
-    @Getter @Setter private String turno;
+    private String turno;
+
+    @OneToMany(mappedBy = "turma")
+    private List<Aluno> alunos;
 
 }

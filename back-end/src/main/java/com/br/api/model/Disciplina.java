@@ -4,13 +4,17 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+@Entity
+@Table(name = "disciplinas")
+@Getter
+@Setter
 public class Disciplina {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_disciplinas")
-    @Getter @Setter private int id_disciplinas;
+    private int id_disciplinas;
 
-    @Column(name = "nome_disciplinas")
-    @Getter @Setter private String nome_disciplinas;
+    @Column(name = "nome_disciplina")
+    private String nome_disciplinas;
 }

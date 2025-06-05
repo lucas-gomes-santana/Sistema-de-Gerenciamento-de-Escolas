@@ -1,5 +1,7 @@
 package com.br.api.dto.aluno;
 
+import com.br.api.model.Aluno.StatusAluno;
+
 public record AlunoDTO(
         int id,
         String nome,
@@ -7,6 +9,6 @@ public record AlunoDTO(
         String rg,
         String telefone,
         String email,
-        String status,
-        String turmaNome
+        StatusAluno status,
+        String nomeTurma
 ) {  }

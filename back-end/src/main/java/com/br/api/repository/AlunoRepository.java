@@ -5,7 +5,18 @@ import org.springframework.stereotype.Repository;
 import com.br.api.model.Aluno;
 import java.util.Optional;
 
+import java.util.List;
+
 @Repository
 public interface AlunoRepository extends JpaRepository<Aluno, Integer> { 
-    Optional<Aluno> findByCpf(String cpf);
+
+    List<Aluno> findByTurmaId(int turmaId);
+
+    Optional<Aluno> findByRg(String rg);
+
+    Optional<Aluno> findByCPF(String cpf);
+
+    boolean existsByCpf(String cpf);
+
+    boolean existsByRg(String rg);
 }

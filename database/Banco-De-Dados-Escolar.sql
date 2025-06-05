@@ -133,14 +133,13 @@ CREATE TABLE `disciplinas` (
 --
 
 DROP TABLE IF EXISTS `endereco`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET @saved_cs_client   MO  = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `endereco` (
   `id_endereco` int NOT NULL,
-  `rua` text DEFAULT NULL,
-  `bairro` text DEFAULT NULL,
+  `nome_rua` text DEFAULT NULL,
+  `nome_bairro` text DEFAULT NULL,
   `cep` varchar(15) DEFAULT NULL,
-  `povoado` text DEFAULT NULL,
   `complemento` text DEFAULT NULL,
   `tipo_entidade` enum('professor','aluno') NOT NULL,
   `id_entidade` int NOT NULL,
@@ -149,7 +148,7 @@ CREATE TABLE `endereco` (
   UNIQUE KEY `complemento_UNIQUE` (`complemento`),
   KEY `idx_endereco_entidade` (`tipo_entidade`,`id_entidade`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET charactero_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `frequencia`
@@ -165,7 +164,7 @@ CREATE TABLE `frequencia` (
   `id_turma` int NOT NULL,
   `presenca` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id_frequencia`),
-  UNIQUE KEY `idx_frequencia_unica` (`id_aluno`,`id_disciplina`,`id_turma`,`data_aula`),
+  UNIQUE KEY `idx_frequencia_unica` (`id_aluno`,`id_disciplina`,`id_turma`),
   KEY `id_disciplina` (`id_disciplina`),
   KEY `id_turma` (`id_turma`),
   CONSTRAINT `frequencia_ibfk_1` FOREIGN KEY (`id_aluno`) REFERENCES `aluno` (`id_aluno`),
@@ -183,12 +182,11 @@ DROP TABLE IF EXISTS `login`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `login` (
   `idlogin` int NOT NULL,
-  `tipo_usuario` enum('admin','professor','aluno','funcionario') NOT NULL,
+  `tipo_usuario` enum('admin','professor','aluno','responsavel') NOT NULL,
   `nome_usuario` varchar(45) NOT NULL,
   `id_usuario` int NOT NULL,
   `senha` varchar(255) NOT NULL,
   `data_criacao` datetime DEFAULT CURRENT_TIMESTAMP,
-  `ultimo_login` datetime DEFAULT NULL,
   PRIMARY KEY (`idlogin`),
   UNIQUE KEY `idlogin_UNIQUE` (`idlogin`),
   UNIQUE KEY `nome_usuario_UNIQUE` (`nome_usuario`),
@@ -285,7 +283,7 @@ CREATE TABLE `eventos` (
   `tema` text DEFAULT NULL,
   `descricao` text DEFAULT NULL,
   PRIMARY KEY (`id_evento`),
-  PRIMARY KEY `id_evento_UNIQUE` (`id_evento`)
+  UNIQUE KEY `id_evento_UNIQUE` (`id_evento`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

@@ -9,26 +9,28 @@ import org.hibernate.validator.constraints.br.CPF;
 
 @Entity
 @Table(name = "responsaveis")
+@Getter
+@Setter
 public class Responsavel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_responsaveis")
-    @Getter @Setter private int id_responsavies;
+    private int id_responsavies;
 
     @Column(name = "nome")
-    @NotBlank
-    @Getter @Setter private String nome;
+    @NotBlank    
+    private String nome_professor;
 
     @CPF
     @Column(name = "cpf")
     @NotBlank
-    @Getter @Setter private String cpf;
+    private String cpf;
 
     @Column(name = "rg")
     @NotBlank
-    @Getter @Setter private String rg;
+    private String rg;
 
     @Column(name = "telefone")
-    @Getter @Setter private String telefone;
+    private String telefone;
 }
