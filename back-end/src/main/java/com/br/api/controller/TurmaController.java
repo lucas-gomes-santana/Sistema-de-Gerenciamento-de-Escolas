@@ -37,7 +37,7 @@ public class TurmaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TurmaDTO> buscarPorId(@PathVariable int id) throws TurmaNotFoundException {
+    public ResponseEntity<TurmaDTO> buscarPorId(@PathVariable Long id) throws TurmaNotFoundException {
         return ResponseEntity.ok(turmaService.buscarPorId(id));
     }
 
@@ -47,13 +47,13 @@ public class TurmaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TurmaDTO> atualizar(@PathVariable int id, @Valid @RequestBody TurmaCadastroDTO dto) 
+    public ResponseEntity<TurmaDTO> atualizar(@PathVariable Long id, @Valid @RequestBody TurmaCadastroDTO dto) 
     throws TurmaNotFoundException {
         return ResponseEntity.ok(turmaService.atualizar(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletarTurma(@PathVariable int id) throws TurmaNotFoundException {
+    public ResponseEntity<Void> deletarTurma(@PathVariable Long id) throws TurmaNotFoundException {
         turmaService.deletarTurma(id);
         return ResponseEntity.noContent().build();
     }

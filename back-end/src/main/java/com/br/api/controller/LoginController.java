@@ -44,13 +44,13 @@ public class LoginController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<LoginDTO> buscarPorId(@PathVariable int id) 
+    public ResponseEntity<LoginDTO> buscarPorId(@PathVariable Long id) 
     throws LoginException {
         return ResponseEntity.ok(loginService.buscarPorId(id));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletarLogin(@PathVariable int id) throws LoginException {
+    public ResponseEntity<Void> deletarLogin(@PathVariable Long id) throws LoginException {
         loginService.deletarLogin(id);
         return ResponseEntity.noContent().build();
     }

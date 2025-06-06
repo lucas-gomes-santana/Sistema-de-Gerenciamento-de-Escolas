@@ -17,5 +17,5 @@ public record LoginCreateDTO (
     TipoUsuario tipo_usuario,
     
     @NotNull(message = "O ID do usuário é obrigatório")
-    int id_usuario
+    Long id_usuario
 ) {  }

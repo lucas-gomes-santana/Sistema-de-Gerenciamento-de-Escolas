@@ -1,7 +1,7 @@
 package com.br.api.dto.turma;
 
 public record TurmaDTO (
-    int id,
+    Long id,
     String nome,
     String turno
 ) {  }

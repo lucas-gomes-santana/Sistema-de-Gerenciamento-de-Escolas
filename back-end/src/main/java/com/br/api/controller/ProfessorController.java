@@ -30,7 +30,7 @@ public class ProfessorController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProfessorDTO> buscarPorId(@PathVariable int id) throws ProfessorNotFoundException {
+    public ResponseEntity<ProfessorDTO> buscarPorId(@PathVariable Long id) throws ProfessorNotFoundException {
         return ResponseEntity.ok(professorService.buscarProfessorPorId(id));
     }
 
@@ -43,14 +43,14 @@ public class ProfessorController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ProfessorDTO> atualizarProfessor(
-        @PathVariable int id,
+        @PathVariable Long id,
         @Valid @RequestBody ProfessorCadastroDTO dto
     ) 
     throws ProfessorNotFoundException, InvalidCredentialException {
         return ResponseEntity.ok(professorService.atualizarProfessor(id, dto));
     }
 
-    public ResponseEntity<ProfessorDTO> excluirProfessor(@PathVariable int id) throws
+    public ResponseEntity<ProfessorDTO> excluirProfessor(@PathVariable Long id) throws
     ProfessorNotFoundException {
         professorService.excluirProfessor(id);
         return ResponseEntity.noContent().build();

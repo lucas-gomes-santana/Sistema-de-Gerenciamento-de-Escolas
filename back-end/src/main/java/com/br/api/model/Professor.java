@@ -20,7 +20,7 @@ public class Professor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_professor")
-    private int id_professor;
+    private Long id_professor;
 
     @NotBlank
     @Column(name = "nome_professor")
@@ -46,7 +46,7 @@ public class Professor {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private String status;
+    private StatusProfessor status;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_endereco")

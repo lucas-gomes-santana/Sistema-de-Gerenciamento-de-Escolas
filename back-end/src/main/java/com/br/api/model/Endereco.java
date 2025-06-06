@@ -22,7 +22,7 @@ public class Endereco {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_endereco")
     @Id
-    private int id_endereco;
+    private Long id_endereco;
 
     @Column(name = "nome_rua")
     private String nome_rua;
@@ -43,7 +43,7 @@ public class Endereco {
     private TipoEntidade tipo_entidade;
 
     @Column(name = "id_entidade")
-    private int id_entidade;
+    private Long id_entidade;
 
     public enum TipoEntidade {
         PROFESSOR,

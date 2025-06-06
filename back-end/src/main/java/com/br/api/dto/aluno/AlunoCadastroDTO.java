@@ -30,5 +30,5 @@ public record AlunoCadastroDTO(
         String email,
 
         @NotNull(message = "ID da turma é obrigatório")
-        int turmaId
+        Long turmaId
 ) {  }

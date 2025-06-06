@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class TurmaDisciplinaProfessorId implements Serializable {
-    private int idTurma;
-    private int idDisciplina;
-    private int idProfessor;
+    private Long idTurma;
+    private Long idDisciplina;
+    private Long idProfessor;
 }

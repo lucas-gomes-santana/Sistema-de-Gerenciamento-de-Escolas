@@ -27,7 +27,7 @@ public class TurmaService {
         return turmaMapper.toDTO(turmaRepository.save(turma));
     }
 
-    public TurmaDTO buscarPorId(int id) throws TurmaNotFoundException {
+    public TurmaDTO buscarPorId(Long id) throws TurmaNotFoundException {
         return turmaRepository.findById(id)
             .map(turmaMapper::toDTO)
             .orElseThrow(() -> new TurmaNotFoundException("Turma não encontrada!"));
@@ -39,7 +39,7 @@ public class TurmaService {
             .collect(Collectors.toList());
     }
 
-    public TurmaDTO atualizar(int id, TurmaCadastroDTO dto) throws TurmaNotFoundException {
+    public TurmaDTO atualizar(Long id, TurmaCadastroDTO dto) throws TurmaNotFoundException {
         Turma turma = turmaRepository.findById(id)
             .orElseThrow(() -> new TurmaNotFoundException("Turma não encontrada!"));
 
@@ -50,7 +50,7 @@ public class TurmaService {
         return turmaMapper.toDTO(turmaRepository.save(turma));
     }
 
-    public void deletarTurma(int id) throws TurmaNotFoundException {
+    public void deletarTurma(Long id) throws TurmaNotFoundException {
         if(!turmaRepository.existsById(id)) {
             throw new TurmaNotFoundException("Turma não encontrada!");
         }

@@ -29,7 +29,7 @@ public class ProfessorService {
             .collect(Collectors.toList());
     }
 
-    public ProfessorDTO buscarProfessorPorId(int id) throws ProfessorNotFoundException {
+    public ProfessorDTO buscarProfessorPorId(Long id) throws ProfessorNotFoundException {
         return professorRepository.findById(id)
             .map(professorMapper::toDTO)
             .orElseThrow(() -> new ProfessorNotFoundException("Professor não encontrado de ID "+ id + " não encontrado!"));
@@ -91,7 +91,7 @@ public class ProfessorService {
     }
 
     @Transactional
-    public ProfessorDTO atualizarProfessor(int id, ProfessorCadastroDTO dto) throws ProfessorNotFoundException, InvalidCredentialException {
+    public ProfessorDTO atualizarProfessor(Long id, ProfessorCadastroDTO dto) throws ProfessorNotFoundException, InvalidCredentialException {
         Professor professor = professorRepository.findById(id)
         .orElseThrow(() -> new ProfessorNotFoundException("Professor não encontrado de ID "+ id + " não encontrado!"));
 
@@ -109,7 +109,7 @@ public class ProfessorService {
     }
 
     @Transactional
-    public void excluirProfessor(int id) throws ProfessorNotFoundException {
+    public void excluirProfessor(Long id) throws ProfessorNotFoundException {
         if (!professorRepository.existsById(id)) {
             throw new ProfessorNotFoundException("Professor de ID " + id + " não encontrado!");
         }

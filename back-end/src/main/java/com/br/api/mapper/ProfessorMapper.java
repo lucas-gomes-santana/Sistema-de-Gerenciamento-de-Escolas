@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import com.br.api.dto.professor.ProfessorCadastroDTO;
 import com.br.api.dto.professor.ProfessorDTO;
 import com.br.api.model.Professor;
+import com.br.api.model.Professor.StatusProfessor;
 
 @Component
 public class ProfessorMapper {
@@ -32,7 +33,7 @@ public class ProfessorMapper {
         professor.setCpf(dto.cpf());
         professor.setRg(dto.rg());
         professor.setTelefone(dto.telefone());
-        professor.setStatus("ATIVO");
+        professor.setStatus(StatusProfessor.ATIVO);
         return professor;
     }
 }

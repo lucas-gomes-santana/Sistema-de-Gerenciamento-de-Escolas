@@ -1,6 +1,5 @@
 package com.br.api.model;
 
-
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -21,7 +20,7 @@ public class Login {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_login")
-    private int id_login;
+    private Long id_login;
 
     @NotBlank(message = "O nome do usuário é obrigatório")
     @Column(name = "nome_usuario", unique = true, nullable = false)
@@ -32,7 +31,7 @@ public class Login {
     private TipoUsuario tipo_usuario;
 
     @Column(name = "id_usuario")
-    private int id_usuario;
+    private Long id_usuario;
 
     @NotBlank(message = "A senha é obrigatória")
     @Column(name = "senha", nullable = false)

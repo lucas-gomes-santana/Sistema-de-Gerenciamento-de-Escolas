@@ -16,7 +16,7 @@ public class Responsavel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_responsaveis")
-    private int id_responsavies;
+    private Long id_responsavies;
 
     @Column(name = "nome")
     @NotBlank    

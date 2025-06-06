@@ -30,14 +30,14 @@ public class AlunoService {
             .collect(Collectors.toList());
     }
 
-    public List<AlunoDTO> buscarAlunosPorTurma(int turmaId) {
+    public List<AlunoDTO> buscarAlunosPorTurma(Long turmaId) {
         return alunoRepository.findByTurmaId(turmaId)
             .stream()
             .map(alunoMapper::toDTO)
             .collect(Collectors.toList());
     }
 
-    public AlunoDetalhesDTO buscarAlunoPorId(int id) throws AlunoNotFoundException {
+    public AlunoDetalhesDTO buscarAlunoPorId(Long id) throws AlunoNotFoundException {
         return alunoRepository.findById(id)
             .map(alunoMapper::toDetalhesDTO)
             .orElseThrow(() -> new AlunoNotFoundException("Aluno de ID "+ id +" não encontrado"));
@@ -95,7 +95,7 @@ public class AlunoService {
     }
 
     // Método para atualizar dados de alunos do sistema
-    public AlunoDTO atualizar(int id, AlunoCadastroDTO dto) throws 
+    public AlunoDTO atualizar(Long id, AlunoCadastroDTO dto) throws 
     AlunoNotFoundException, TurmaNotFoundException, InvalidCredentialException {
         Aluno aluno = alunoRepository.findById(id)
             .orElseThrow(() -> new AlunoNotFoundException("Aluno não encontrado com ID: "+id));
@@ -119,7 +119,7 @@ public class AlunoService {
     }
 
     // Método para excluir alunos do sistema
-    public void excluirAluno(int id) throws AlunoNotFoundException {
+    public void excluirAluno(Long id) throws AlunoNotFoundException {
         if (!alunoRepository.existsById(id)) {
             throw new AlunoNotFoundException("Aluno de ID " + id +  " não encontrado!");
         }

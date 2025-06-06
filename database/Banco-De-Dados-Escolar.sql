@@ -30,7 +30,7 @@ CREATE TABLE `aluno` (
   `id_endereco` int NOT NULL,
   `telefone` varchar(15) DEFAULT NULL,
   `email` varchar(30) DEFAULT NULL,
-  `status` varchar(15) DEFAULT NULL,
+  `status` text DEFAULT NULL,
   `id_turma` int NOT NULL,
   PRIMARY KEY (`id_aluno`),
   UNIQUE KEY `id_aluno_UNIQUE` (`id_aluno`),
@@ -181,14 +181,14 @@ DROP TABLE IF EXISTS `login`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `login` (
-  `idlogin` int NOT NULL,
+  `id_login` int NOT NULL,
   `tipo_usuario` enum('admin','professor','aluno','responsavel') NOT NULL,
   `nome_usuario` varchar(45) NOT NULL,
   `id_usuario` int NOT NULL,
   `senha` varchar(255) NOT NULL,
   `data_criacao` datetime DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`idlogin`),
-  UNIQUE KEY `idlogin_UNIQUE` (`idlogin`),
+  PRIMARY KEY (`id_login`),
+  UNIQUE KEY `id_login_UNIQUE` (`id_login`),
   UNIQUE KEY `nome_usuario_UNIQUE` (`nome_usuario`),
   KEY `idx_login_usuario` (`tipo_usuario`,`id_usuario`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;

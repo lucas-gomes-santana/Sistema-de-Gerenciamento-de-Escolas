@@ -1,6 +1,6 @@
 package com.br.api.dto.disciplina;
 
 public record DisciplinaDTO (
-    int id,
+    Long id,
     String nomeDisciplinas
 ) {  }

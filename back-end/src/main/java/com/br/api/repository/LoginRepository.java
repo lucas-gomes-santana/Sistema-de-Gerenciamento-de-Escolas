@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import com.br.api.model.Login;
 
 @Repository
-public interface LoginRepository extends JpaRepository<Login, Integer> {
+public interface LoginRepository extends JpaRepository<Login, Long> {
     Optional<Login> findByNomeUsuario(String nomeUsuario);
     boolean existsByNomeUsuario(String nomeUsuario);
 }

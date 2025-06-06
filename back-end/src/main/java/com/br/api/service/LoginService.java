@@ -48,14 +48,14 @@ public class LoginService {
         return loginMapper.toDTO(loginRepository.save(login));
     }
 
-    public LoginDTO buscarPorId(int id) throws LoginException {
+    public LoginDTO buscarPorId(Long id) throws LoginException {
         return loginRepository.findById(id)
             .map(loginMapper::toDTO)
             .orElseThrow(() -> new LoginException("Login não encontrado!"));   
     }
 
 
-    public void deletarLogin(int id) throws LoginException {
+    public void deletarLogin(Long id) throws LoginException {
         if(!loginRepository.existsById(id)) {
             throw new LoginException("Login não encontrado!");
         }

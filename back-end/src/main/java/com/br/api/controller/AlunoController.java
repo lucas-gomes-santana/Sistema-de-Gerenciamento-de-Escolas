@@ -35,12 +35,12 @@ public class AlunoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AlunoDetalhesDTO> buscarPorId(@PathVariable int id) throws AlunoNotFoundException {
+    public ResponseEntity<AlunoDetalhesDTO> buscarPorId(@PathVariable Long id) throws AlunoNotFoundException {
         return ResponseEntity.ok(alunoService.buscarAlunoPorId(id));
     }
 
     @GetMapping("/turma/{turmaId}")
-    public ResponseEntity<List<AlunoDTO>> buscarPorTurma(@PathVariable int turmaId) {
+    public ResponseEntity<List<AlunoDTO>> buscarPorTurma(@PathVariable Long turmaId) {
         return ResponseEntity.ok(alunoService.buscarAlunosPorTurma(turmaId));
     }
 
@@ -53,7 +53,7 @@ public class AlunoController {
 
     @PutMapping("/{id}")
     public ResponseEntity<AlunoDTO> atualizarAluno(
-        @PathVariable int id,
+        @PathVariable Long id,
         @Valid @RequestBody AlunoCadastroDTO dto
     )
     throws AlunoNotFoundException, TurmaNotFoundException, InvalidCredentialException {
@@ -61,7 +61,7 @@ public class AlunoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> excluirAluno(@PathVariable int id) throws 
+    public ResponseEntity<Void> excluirAluno(@PathVariable Long id) throws 
     AlunoNotFoundException {
         alunoService.excluirAluno(id);
         return ResponseEntity.noContent().build();

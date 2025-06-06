@@ -19,7 +19,7 @@ public class Aluno {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_aluno")
-    private int id_aluno;
+    private Long id_aluno;
 
     @NotBlank
     @Column(name = "nome_aluno")
