@@ -7,7 +7,6 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 import java.util.List;
-import java.util.Set;
 
 import org.hibernate.validator.constraints.br.CPF;
 
@@ -48,25 +47,9 @@ public class Professor {
     @Column(name = "status")
     private StatusProfessor status;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_endereco")
-    private Endereco endereco;
 
-    @ManyToMany(fetch =  FetchType.LAZY)
-    @JoinTable(
-        name = "turma_disciplina_professor",
-        joinColumns = @JoinColumn(name = "id_professor"),
-        inverseJoinColumns = @JoinColumn(name = "id_disciplinas")
-    )
-    private List<Disciplina> disciplinas;
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "id_disciplina_professor",
-        joinColumns = @JoinColumn(name = "id_professor"),
-        inverseJoinColumns = @JoinColumn(name = "id_turma")
-    )
-    private Set<Turma> turmas;
+    @OneToMany(mappedBy = "professor", fetch = FetchType.LAZY)
+    private List<TurmaDisciplinaProfessor> turmaDisciplinaProfessores;
 
     public enum StatusProfessor {
         ATIVO, INATIVO

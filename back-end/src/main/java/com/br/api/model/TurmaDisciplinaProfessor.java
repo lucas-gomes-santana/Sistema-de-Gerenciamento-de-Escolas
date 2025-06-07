@@ -8,12 +8,14 @@ import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.NoArgsConstructor;
 import jakarta.persistence.EmbeddedId;
 
 @Entity
 @Table(name = "turma_disciplina_professor")
 @Getter
 @Setter
+@NoArgsConstructor
 public class TurmaDisciplinaProfessor {
 
     @EmbeddedId

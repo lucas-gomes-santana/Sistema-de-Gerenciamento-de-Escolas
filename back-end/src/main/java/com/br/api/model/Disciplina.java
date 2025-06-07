@@ -16,5 +16,5 @@ public class Disciplina {
     private Long id_disciplinas;
 
     @Column(name = "nome_disciplina")
-    private String nome_disciplinas;
+    private String nome_disciplina;
 }

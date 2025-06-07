@@ -35,7 +35,7 @@ public class ProfessorService {
             .orElseThrow(() -> new ProfessorNotFoundException("Professor não encontrado de ID "+ id + " não encontrado!"));
     }
 
-    public List<ProfessorDTO> buscarPorDisciplina(int disciplinaId) {
+    public List<ProfessorDTO> buscarPorDisciplina(Long disciplinaId) {
         return professorRepository.findByDisciplinaId(disciplinaId)
             .stream()
             .map(professorMapper::toDTO)

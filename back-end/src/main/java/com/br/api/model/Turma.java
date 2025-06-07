@@ -29,4 +29,6 @@ public class Turma {
     @OneToMany(mappedBy = "turma")
     private List<Aluno> alunos;
 
+    @OneToMany(mappedBy = "turma")
+    private List<TurmaDisciplinaProfessor> turmaDisciplinaProfessores;
 }

@@ -1,11 +1,11 @@
 package com.br.api.model;
 
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.br.CPF;
+import java.util.List;
 
 @Entity
 @Table(name = "responsaveis")
@@ -18,9 +18,9 @@ public class Responsavel {
     @Column(name = "id_responsaveis")
     private Long id_responsavies;
 
-    @Column(name = "nome")
+    @Column(name = "nome_responsavel")
     @NotBlank    
-    private String nome_professor;
+    private String nome_responsavel;
 
     @CPF
     @Column(name = "cpf")
@@ -33,4 +33,7 @@ public class Responsavel {
 
     @Column(name = "telefone")
     private String telefone;
+
+    @ManyToMany(mappedBy = "responsaveis", fetch = FetchType.LAZY)
+    private List<Aluno> alunos;
 }

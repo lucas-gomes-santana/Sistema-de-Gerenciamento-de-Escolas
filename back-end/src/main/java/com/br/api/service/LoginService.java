@@ -28,7 +28,7 @@ public class LoginService {
     private final PasswordEncoder passwordEncoder;
 
     public LoginDTO criarLogin(LoginCreateDTO dto) throws GlobalHandlerException {
-        if(loginRepository.existsByNomeUsuario(dto.nome_usuario())) {
+        if(loginRepository.existsByNome_usuario(dto.nome_usuario())) {
             throw new GlobalHandlerException("Esse nome de usuário já existe!");
         }
         Login login = loginMapper.toEntity(dto);
@@ -39,7 +39,7 @@ public class LoginService {
     }
 
     public LoginDTO autenticar(LoginRequestDTO dto) throws InvalidCredentialException {
-        Login login = loginRepository.findByNomeUsuario(dto.nome_usuario())
+        Login login = loginRepository.findByNome_usuario(dto.nome_usuario())
             .orElseThrow(() -> new InvalidCredentialException("Credencias inválidas!"));
 
         if(!passwordEncoder.matches(dto.senha(), login.getSenha())) {

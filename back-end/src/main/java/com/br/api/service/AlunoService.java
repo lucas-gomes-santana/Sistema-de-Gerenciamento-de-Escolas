@@ -30,8 +30,8 @@ public class AlunoService {
             .collect(Collectors.toList());
     }
 
-    public List<AlunoDTO> buscarAlunosPorTurma(Long turmaId) {
-        return alunoRepository.findByTurmaId(turmaId)
+    public List<AlunoDTO> buscarAlunosPorTurma(Long id_turma) {
+        return alunoRepository.findByTurmaId(id_turma)
             .stream()
             .map(alunoMapper::toDTO)
             .collect(Collectors.toList());
