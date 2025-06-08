@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/turmas")
+@RequestMapping("/turmas")
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class TurmaController {

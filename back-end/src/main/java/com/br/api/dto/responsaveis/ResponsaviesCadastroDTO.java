@@ -1,5 +1,7 @@
 package com.br.api.dto.responsaveis;
 
+import org.hibernate.validator.constraints.br.CPF;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -9,6 +11,7 @@ public record ResponsaviesCadastroDTO (
     String nome,
 
     @NotBlank(message = "Obrigatório inserir CPF do responsável!")
+    @CPF
     String cpf,
 
     @NotBlank(message = "Obrigatório inserir RG do responsável!")

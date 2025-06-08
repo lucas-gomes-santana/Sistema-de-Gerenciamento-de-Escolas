@@ -1,16 +1,16 @@
 package com.br.api.service;
 
-
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import com.br.api.dto.professor.ProfessorCadastroDTO;
 import com.br.api.dto.professor.ProfessorDTO;
-import com.br.api.exception.InvalidCredentialException;
 import com.br.api.exception.ProfessorNotFoundException;
 import com.br.api.mapper.ProfessorMapper;
 import com.br.api.model.Professor;
+import com.br.api.model.Disciplina;
 import com.br.api.repository.ProfessorRepository;
+import com.br.api.repository.DisciplinaRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class ProfessorService {
 
     private final ProfessorRepository professorRepository;
+    private final DisciplinaRepository disciplinaRepository;
     private final ProfessorMapper professorMapper;
 
     public List<ProfessorDTO> listarTodos() {
@@ -29,61 +30,37 @@ public class ProfessorService {
             .collect(Collectors.toList());
     }
 
-    public ProfessorDTO buscarProfessorPorId(Long id) throws ProfessorNotFoundException {
+    public ProfessorDTO buscarPorId(Long id) throws ProfessorNotFoundException {
         return professorRepository.findById(id)
             .map(professorMapper::toDTO)
-            .orElseThrow(() -> new ProfessorNotFoundException("Professor não encontrado de ID "+ id + " não encontrado!"));
-    }
-
-    public List<ProfessorDTO> buscarPorDisciplina(Long disciplinaId) {
-        return professorRepository.findByDisciplinaId(disciplinaId)
-            .stream()
-            .map(professorMapper::toDTO)
-            .collect(Collectors.toList());
-    }
-
-    public boolean validarDadosProfessor(Professor professor) throws InvalidCredentialException {
-        if (professor == null) {
-            throw new InvalidCredentialException("O professor deve ter um nome");
-        }
-
-        String cpfRegex = "^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$";
-        String rgRegex = "^\\d{2}\\.\\d{3}\\.\\d{3}-\\d{1}$";
-        String telefoneRegex = "^\\(\\d{2}\\) \\d{5}-\\d{4}$";
-        String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
-
-        if (!professor.getCpf().matches(cpfRegex)) {
-            throw new InvalidCredentialException("Formato inválido do CPF " + professor.getCpf() + " do professor " + professor.getNome_professor());
-        }
-
-        if (!professor.getRg().matches(rgRegex)) {
-            throw new InvalidCredentialException("Formato inválido do RG " + professor.getRg() + " do professor " + professor.getNome_professor());
-        }
-
-        if (!professor.getTelefone().matches(telefoneRegex)) {
-            throw new InvalidCredentialException("Formato inválido do Telefone " + professor.getTelefone() + " do professor " + professor.getNome_professor());
-        }
-
-        if (!professor.getEmail().matches(emailRegex)) {
-            throw new InvalidCredentialException("Formato inválido do Email " + professor.getEmail());
-        }
-
-        return true;
+            .orElseThrow(() -> new ProfessorNotFoundException("Professor não encontrado"));
     }
 
     @Transactional
-    public ProfessorDTO cadastrarProfessor(ProfessorCadastroDTO dto) throws InvalidCredentialException {
-        Professor professor = professorMapper.toEntity(dto);
-        
-        validarDadosProfessor(professor);
-        
+    public ProfessorDTO cadastrar(ProfessorCadastroDTO dto) {
+        validarDadosProfessor(dto);
+
         // Verificar se CPF ou RG já existem
-        if (professorRepository.existsByCpf(professor.getCpf())) {
-            throw new InvalidCredentialException("CPF já cadastrado");
+        if (professorRepository.existsByCpf(dto.cpf())) {
+            throw new IllegalArgumentException("CPF já cadastrado");
         }
         
-        if (professorRepository.existsByRg(professor.getRg())) {
-            throw new InvalidCredentialException("RG já cadastrado");
+        if (professorRepository.existsByRg(dto.rg())) {
+            throw new IllegalArgumentException("RG já cadastrado");
+        }
+
+        Professor professor = professorMapper.toEntity(dto);
+        professor.setStatus("Ativo");
+
+        // Se uma disciplina foi fornecida, verifica se já existe ou cria uma nova
+        if (dto.disciplina() != null) {
+            Disciplina disciplina = disciplinaRepository.findByNome_disciplina(dto.disciplina().nomeDisciplina())
+                .orElseGet(() -> {
+                    Disciplina novaDisciplina = new Disciplina();
+                    novaDisciplina.setNome_disciplina(dto.disciplina().nomeDisciplina());
+                    return disciplinaRepository.save(novaDisciplina);
+                });
+            professor.setDisciplinas(disciplina);
         }
 
         professor = professorRepository.save(professor);
@@ -91,10 +68,20 @@ public class ProfessorService {
     }
 
     @Transactional
-    public ProfessorDTO atualizarProfessor(Long id, ProfessorCadastroDTO dto) throws ProfessorNotFoundException, InvalidCredentialException {
+    public ProfessorDTO atualizar(Long id, ProfessorCadastroDTO dto) throws ProfessorNotFoundException {
         Professor professor = professorRepository.findById(id)
-        .orElseThrow(() -> new ProfessorNotFoundException("Professor não encontrado de ID "+ id + " não encontrado!"));
+            .orElseThrow(() -> new ProfessorNotFoundException("Professor não encontrado"));
 
+        validarDadosProfessor(dto);
+
+        // Verificar se o CPF ou RG já existem em outro professor
+        if (!professor.getCpf().equals(dto.cpf()) && professorRepository.existsByCpf(dto.cpf())) {
+            throw new IllegalArgumentException("CPF já cadastrado");
+        }
+        
+        if (!professor.getRg().equals(dto.rg()) && professorRepository.existsByRg(dto.rg())) {
+            throw new IllegalArgumentException("RG já cadastrado");
+        }
 
         professor.setNome_professor(dto.nome());
         professor.setCpf(dto.cpf());
@@ -102,17 +89,39 @@ public class ProfessorService {
         professor.setTelefone(dto.telefone());
         professor.setEmail(dto.email());
 
-        validarDadosProfessor(professor);
+        // Se uma disciplina foi fornecida, verifica se já existe ou cria uma nova
+        if (dto.disciplina() != null) {
+            Disciplina disciplina = disciplinaRepository.findByNome_disciplina(dto.disciplina().nomeDisciplina())
+                .orElseGet(() -> {
+                    Disciplina novaDisciplina = new Disciplina();
+                    novaDisciplina.setNome_disciplina(dto.disciplina().nomeDisciplina());
+                    return disciplinaRepository.save(novaDisciplina);
+                });
+            professor.setDisciplinas(disciplina);
+        }
 
         professor = professorRepository.save(professor);
         return professorMapper.toDTO(professor);
     }
 
     @Transactional
-    public void excluirProfessor(Long id) throws ProfessorNotFoundException {
+    public void excluir(Long id) throws ProfessorNotFoundException {
         if (!professorRepository.existsById(id)) {
-            throw new ProfessorNotFoundException("Professor de ID " + id + " não encontrado!");
+            throw new ProfessorNotFoundException("Professor não encontrado");
         }
         professorRepository.deleteById(id);
+    }
+
+    private void validarDadosProfessor(ProfessorCadastroDTO dto) {
+        String telefoneRegex = "^\\(\\d{2}\\) \\d{5}-\\d{4}$";
+        String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
+
+        if (!dto.telefone().matches(telefoneRegex)) {
+            throw new IllegalArgumentException("Formato inválido do Telefone " + dto.telefone());
+        }
+
+        if (dto.email() != null && !dto.email().matches(emailRegex)) {
+            throw new IllegalArgumentException("Formato inválido do Email " + dto.email());
+        }
     }
 }

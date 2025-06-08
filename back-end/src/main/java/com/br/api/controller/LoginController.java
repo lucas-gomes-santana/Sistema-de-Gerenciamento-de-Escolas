@@ -23,7 +23,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/login")
+@RequestMapping("/login")
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class LoginController {

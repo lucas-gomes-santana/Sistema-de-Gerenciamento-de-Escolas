@@ -3,7 +3,7 @@ USE Escola;
 
 DROP TABLE IF EXISTS `disciplinas`;
 CREATE TABLE `disciplinas` (
-  `id_disciplinas` bigint NOT NULL,
+  `id_disciplinas` bigint AUTO_INCREMENT NOT NULL,
   `nome_disciplina` varchar(100) NOT NULL,
   PRIMARY KEY (`id_disciplinas`),
   UNIQUE KEY `id_disciplinas_UNIQUE` (`id_disciplinas`),
@@ -12,7 +12,7 @@ CREATE TABLE `disciplinas` (
 
 DROP TABLE IF EXISTS `turma`;
 CREATE TABLE `turma` (
-  `id_turma` bigint NOT NULL,
+  `id_turma` bigint AUTO_INCREMENT NOT NULL,
   `nome_turma` varchar(100) DEFAULT NULL,
   `turno` varchar(10) DEFAULT NULL,
   PRIMARY KEY (`id_turma`),
@@ -21,7 +21,7 @@ CREATE TABLE `turma` (
 
 DROP TABLE IF EXISTS `endereco`;
 CREATE TABLE `endereco` (
-  `id_endereco` bigint NOT NULL,
+  `id_endereco` bigint AUTO_INCREMENT NOT NULL,
   `nome_rua` varchar(100) DEFAULT NULL,
   `nome_bairro` varchar(100) DEFAULT NULL,
   `cep` varchar(15) DEFAULT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE `endereco` (
 
 DROP TABLE IF EXISTS `responsaveis`;
 CREATE TABLE `responsaveis` (
-  `id_responsaveis` bigint NOT NULL,
+  `id_responsaveis` bigint AUTO_INCREMENT NOT NULL,
   `nome_responsavel` varchar(100) NOT NULL,
   `cpf` varchar(20) NOT NULL,
   `telefone` varchar(25) NOT NULL,
@@ -49,7 +49,7 @@ CREATE TABLE `responsaveis` (
 
 DROP TABLE IF EXISTS `aluno`;
 CREATE TABLE `aluno` (
-  `id_aluno` bigint NOT NULL,
+  `id_aluno` bigint AUTO_INCREMENT NOT NULL,
   `nome_aluno` varchar(100) NOT NULL,
   `cpf` varchar(20) NOT NULL,
   `rg` varchar(20) NOT NULL,
@@ -70,15 +70,15 @@ CREATE TABLE `aluno` (
 
 DROP TABLE IF EXISTS `professor`;
 CREATE TABLE `professor` (
-  `id_professor` bigint NOT NULL,
+  `id_professor` bigint AUTO_INCREMENT NOT NULL,
   `nome_professor` varchar(100) NOT NULL,
   `cpf` varchar(20) NOT NULL,
   `rg` varchar(20) NOT NULL,
   `telefone` varchar(25) NOT NULL,
   `email` varchar(30) DEFAULT NULL,
   `status` varchar(100) DEFAULT NULL,
-  `disciplinas_id_disciplinas` bigint NOT NULL,
-  PRIMARY KEY (`id_professor`,`disciplinas_id_disciplinas`),
+  `disciplinas_id_disciplinas` bigint NULL,
+  PRIMARY KEY (`id_professor`),
   UNIQUE KEY `id_professor_UNIQUE` (`id_professor`),
   UNIQUE KEY `cpf_UNIQUE` (`cpf`),
   UNIQUE KEY `rg_UNIQUE` (`rg`),
@@ -152,7 +152,7 @@ CREATE TABLE `frequencia` (
 
 DROP TABLE IF EXISTS `login`;
 CREATE TABLE `login` (
-  `id_login` bigint NOT NULL,
+  `id_login` bigint AUTO_INCREMENT NOT NULL,
   `tipo_usuario` enum('admin','professor','aluno','responsavel') NOT NULL,
   `nome_usuario` varchar(45) NOT NULL,
   `id_usuario` bigint NOT NULL,
@@ -166,7 +166,7 @@ CREATE TABLE `login` (
 
 DROP TABLE IF EXISTS `turma_disciplina_professor`;
 CREATE TABLE `turma_disciplina_professor` (
-  `id_turma` bigint NOT NULL,
+  `id_turma` bigint AUTO_INCREMENT NOT NULL,
   `id_disciplinas` bigint NOT NULL,
   `id_professor` bigint NOT NULL,
   KEY `fk_turma_disciplina_professor_turma1_idx` (`id_turma`),
@@ -179,7 +179,7 @@ CREATE TABLE `turma_disciplina_professor` (
 
 DROP TABLE IF EXISTS `eventos`;
 CREATE TABLE `eventos` (
-  `id_evento` bigint NOT NULL,
+  `id_evento` bigint AUTO_INCREMENT NOT NULL,
   `nome_evento` text NOT NULL,
   `tema` text DEFAULT NULL,
   `descricao` text DEFAULT NULL,

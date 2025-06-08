@@ -11,7 +11,7 @@ import com.br.api.exception.DisciplinaNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/turma-disciplina-professor")
+@RequestMapping("/turma-disciplina-professor")
 @RequiredArgsConstructor
 public class TurmaDisciplinaProfessorController {
 

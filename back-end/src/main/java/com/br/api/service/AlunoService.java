@@ -9,9 +9,13 @@ import com.br.api.exception.*;
 import com.br.api.mapper.AlunoMapper;
 import com.br.api.repository.AlunoRepository;
 import com.br.api.repository.TurmaRepository;
+import com.br.api.repository.EnderecoRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import com.br.api.model.Aluno;
+import com.br.api.model.Turma;
+import com.br.api.model.Endereco;
+import com.br.api.model.Endereco.TipoEntidade;
 import java.util.List;
 
 @Service
@@ -21,6 +25,7 @@ public class AlunoService {
 
     private final AlunoRepository alunoRepository;
     private final TurmaRepository turmaRepository;
+    private final EnderecoRepository enderecoRepository;
     private final AlunoMapper alunoMapper;
     
     public List<AlunoDTO> listarTodos() {
@@ -48,24 +53,14 @@ public class AlunoService {
             throw new InvalidCredentialException("O aluno deve ter um nome");
         }
 
-        String cpfRegex = "^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$";
-        String rgRegex = "^(\\d{1,2}\\.?\\d{3}\\.?\\d{3}-?[\\dX]{1,2}|\\d{8,10}|[\\dX]{7,10})$";
         String telefoneRegex = "^\\(\\d{2}\\) \\d{5}-\\d{4}$";
         String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
-
-        if(!aluno.getCpf().matches(cpfRegex)) {
-            throw new InvalidCredentialException("Formato inválido do CPF "+ aluno.getCpf()+ " do aluno "+ aluno.getNome_aluno());
-        }
-
-        if(!aluno.getRg().matches(rgRegex)) {
-            throw new InvalidCredentialException("Formato inválido do RG " + aluno.getRg() + " do aluno " + aluno.getNome_aluno());
-        }
 
         if(!aluno.getTelefone().matches(telefoneRegex)) {
             throw new InvalidCredentialException("Formato inválido do Telefone " + aluno.getTelefone() + " do aluno " + aluno.getNome_aluno());
         }
 
-        if(!aluno.getEmail().matches(emailRegex)) {
+        if (aluno.getEmail() != null && !aluno.getEmail().matches(emailRegex)) {
             throw new InvalidCredentialException("Formato inválido do Email " + aluno.getEmail());
         }
 
@@ -74,7 +69,6 @@ public class AlunoService {
 
     // Método de cadastro de novos alunos
     public AlunoDTO cadastrarAluno(AlunoCadastroDTO dto) throws AlunoNotFoundException, InvalidCredentialException {
-
         Aluno aluno = alunoMapper.toEntity(dto);
 
         // Validar dados antes de cadastrar
@@ -87,8 +81,19 @@ public class AlunoService {
         validarDadosAluno(aluno); 
 
         // Verifica se a turma existe
-        aluno.setTurma(turmaRepository.findById(dto.turmaId())
-            .orElseThrow(() -> new AlunoNotFoundException("Turma não encontrada")));
+        Turma turma = turmaRepository.findByNome_turma(dto.turma().nome())
+            .orElseThrow(() -> new AlunoNotFoundException("Turma não encontrada"));
+        aluno.setTurma(turma);
+
+        // Cria e salva o endereço
+        Endereco endereco = new Endereco();
+        endereco.setNome_rua(dto.endereco().rua());
+        endereco.setNome_bairro(dto.endereco().bairro());
+        endereco.setCep(dto.endereco().cep());
+        endereco.setComplemento(dto.endereco().complemento());
+        endereco.setTipo_entidade(TipoEntidade.ALUNO);
+        endereco = enderecoRepository.save(endereco);
+        aluno.setEndereco(endereco);
 
         aluno = alunoRepository.save(aluno);
         return alunoMapper.toDTO(aluno);
@@ -109,10 +114,20 @@ public class AlunoService {
         
         validarDadosAluno(aluno); 
 
-        if (dto.turmaId() != aluno.getTurma().getId_turma()) {
-            aluno.setTurma(turmaRepository.findById(dto.turmaId())
-                .orElseThrow(() -> new TurmaNotFoundException("Turma de ID " + dto.turmaId() + " não encontrada")));
+        // Atualiza a turma se necessário
+        Turma novaTurma = turmaRepository.findByNome_turma(dto.turma().nome())
+            .orElseThrow(() -> new TurmaNotFoundException("Turma não encontrada"));
+        if (!novaTurma.getId_turma().equals(aluno.getTurma().getId_turma())) {
+            aluno.setTurma(novaTurma);
         }
+
+        // Atualiza o endereço
+        Endereco endereco = aluno.getEndereco();
+        endereco.setNome_rua(dto.endereco().rua());
+        endereco.setNome_bairro(dto.endereco().bairro());
+        endereco.setCep(dto.endereco().cep());
+        endereco.setComplemento(dto.endereco().complemento());
+        enderecoRepository.save(endereco);
 
         aluno = alunoRepository.save(aluno);
         return alunoMapper.toDTO(aluno);

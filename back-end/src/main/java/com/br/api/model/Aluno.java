@@ -28,12 +28,10 @@ public class Aluno {
     @NotBlank
     @Column(name = "cpf", unique = true, nullable = false)
     @CPF
-    @Pattern(regexp = "^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$", message = "CPF inválido")
     private String cpf;
 
     @NotBlank
     @Column(name = "rg", unique = true, nullable = false)
-    @Pattern(regexp = "^(\\d{1,2}\\.?\\d{3}\\.?\\d{3}-?[\\dX]{1,2}|\\d{8,10}|[\\dX]{7,10})$", message = "RG inválido")
     private String rg;
 
     @Column(name = "telefone")

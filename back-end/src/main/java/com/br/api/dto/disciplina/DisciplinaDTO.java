@@ -1,6 +1,9 @@
 package com.br.api.dto.disciplina;
 
-public record DisciplinaDTO (
+import jakarta.validation.constraints.NotBlank;
+
+public record DisciplinaDTO(
     Long id,
-    String nomeDisciplinas
-) {  }
+    @NotBlank(message = "Nome da disciplina é obrigatório")
+    String nomeDisciplina
+) {}

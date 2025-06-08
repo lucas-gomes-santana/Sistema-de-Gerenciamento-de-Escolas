@@ -9,5 +9,7 @@ public record ProfessorDTO(
     String rg,
     String telefone,
     String email,
-    StatusProfessor status
+    String status,
+    Long disciplinaId,
+    String disciplinaNome
 ) {  }
