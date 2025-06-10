@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import com.br.api.dto.professor.ProfessorCadastroDTO;
 import com.br.api.dto.professor.ProfessorDTO;
+import com.br.api.exception.InvalidCredentialException;
 import com.br.api.exception.ProfessorNotFoundException;
 import com.br.api.mapper.ProfessorMapper;
 import com.br.api.model.Professor;
@@ -37,16 +38,16 @@ public class ProfessorService {
     }
 
     @Transactional
-    public ProfessorDTO cadastrar(ProfessorCadastroDTO dto) {
+    public ProfessorDTO cadastrar(ProfessorCadastroDTO dto) throws InvalidCredentialException {
         validarDadosProfessor(dto);
 
         // Verificar se CPF ou RG já existem
         if (professorRepository.existsByCpf(dto.cpf())) {
-            throw new IllegalArgumentException("CPF já cadastrado");
+            throw new InvalidCredentialException("CPF já cadastrado");
         }
         
         if (professorRepository.existsByRg(dto.rg())) {
-            throw new IllegalArgumentException("RG já cadastrado");
+            throw new InvalidCredentialException("RG já cadastrado");
         }
 
         Professor professor = professorMapper.toEntity(dto);
@@ -68,7 +69,7 @@ public class ProfessorService {
     }
 
     @Transactional
-    public ProfessorDTO atualizar(Long id, ProfessorCadastroDTO dto) throws ProfessorNotFoundException {
+    public ProfessorDTO atualizar(Long id, ProfessorCadastroDTO dto) throws ProfessorNotFoundException, InvalidCredentialException {
         Professor professor = professorRepository.findById(id)
             .orElseThrow(() -> new ProfessorNotFoundException("Professor não encontrado"));
 
@@ -112,16 +113,16 @@ public class ProfessorService {
         professorRepository.deleteById(id);
     }
 
-    private void validarDadosProfessor(ProfessorCadastroDTO dto) {
+    private void validarDadosProfessor(ProfessorCadastroDTO dto) throws InvalidCredentialException {
         String telefoneRegex = "^\\(\\d{2}\\) \\d{5}-\\d{4}$";
         String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
 
         if (!dto.telefone().matches(telefoneRegex)) {
-            throw new IllegalArgumentException("Formato inválido do Telefone " + dto.telefone());
+            throw new InvalidCredentialException("Formato inválido do Telefone " + dto.telefone());
         }
 
         if (dto.email() != null && !dto.email().matches(emailRegex)) {
-            throw new IllegalArgumentException("Formato inválido do Email " + dto.email());
+            throw new InvalidCredentialException("Formato inválido do Email " + dto.email());
         }
     }
 }

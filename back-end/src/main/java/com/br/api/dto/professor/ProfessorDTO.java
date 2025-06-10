@@ -1,7 +1,5 @@
 package com.br.api.dto.professor;
 
-import com.br.api.model.Professor.StatusProfessor;
-
 public record ProfessorDTO(
     Long id,
     String nome,

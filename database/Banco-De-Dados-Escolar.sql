@@ -1,7 +1,6 @@
 CREATE DATABASE Escola;
 USE Escola;
 
-DROP TABLE IF EXISTS `disciplinas`;
 CREATE TABLE `disciplinas` (
   `id_disciplinas` bigint AUTO_INCREMENT NOT NULL,
   `nome_disciplina` varchar(100) NOT NULL,
@@ -10,7 +9,6 @@ CREATE TABLE `disciplinas` (
   UNIQUE KEY `nome_disciplina_UNIQUE` (`nome_disciplina`)
 );
 
-DROP TABLE IF EXISTS `turma`;
 CREATE TABLE `turma` (
   `id_turma` bigint AUTO_INCREMENT NOT NULL,
   `nome_turma` varchar(100) DEFAULT NULL,
@@ -19,7 +17,6 @@ CREATE TABLE `turma` (
   UNIQUE KEY `id_turma_UNIQUE` (`id_turma`)
 );
 
-DROP TABLE IF EXISTS `endereco`;
 CREATE TABLE `endereco` (
   `id_endereco` bigint AUTO_INCREMENT NOT NULL,
   `nome_rua` varchar(100) DEFAULT NULL,
@@ -34,7 +31,6 @@ CREATE TABLE `endereco` (
   KEY `idx_endereco_entidade` (`tipo_entidade`,`id_entidade`)
 );
 
-DROP TABLE IF EXISTS `responsaveis`;
 CREATE TABLE `responsaveis` (
   `id_responsaveis` bigint AUTO_INCREMENT NOT NULL,
   `nome_responsavel` varchar(100) NOT NULL,
@@ -47,7 +43,6 @@ CREATE TABLE `responsaveis` (
   UNIQUE KEY `rg_UNIQUE` (`rg`)
 );
 
-DROP TABLE IF EXISTS `aluno`;
 CREATE TABLE `aluno` (
   `id_aluno` bigint AUTO_INCREMENT NOT NULL,
   `nome_aluno` varchar(100) NOT NULL,
@@ -68,7 +63,6 @@ CREATE TABLE `aluno` (
   CONSTRAINT `fk_aluno_turma1` FOREIGN KEY (`id_turma`) REFERENCES `turma` (`id_turma`)
 );
 
-DROP TABLE IF EXISTS `professor`;
 CREATE TABLE `professor` (
   `id_professor` bigint AUTO_INCREMENT NOT NULL,
   `nome_professor` varchar(100) NOT NULL,
@@ -86,7 +80,6 @@ CREATE TABLE `professor` (
   CONSTRAINT `fk_professor_disciplinas1` FOREIGN KEY (`disciplinas_id_disciplinas`) REFERENCES `disciplinas` (`id_disciplinas`)
 );
 
-DROP TABLE IF EXISTS `aluno_responsavel`;
 CREATE TABLE `aluno_responsavel` (
   `id_aluno_responsavel` bigint NOT NULL,
   `parentesco` varchar(15) DEFAULT NULL,
@@ -99,7 +92,6 @@ CREATE TABLE `aluno_responsavel` (
   CONSTRAINT `fk_aluno_responsavel_responsaveis1` FOREIGN KEY (`id_responsaveis`) REFERENCES `responsaveis` (`id_responsaveis`)
 );
 
-DROP TABLE IF EXISTS `avaliacoes`;
 CREATE TABLE `avaliacoes` (
   `id_avaliacao` bigint NOT NULL AUTO_INCREMENT,
   `id_disciplina` bigint NOT NULL,
@@ -115,7 +107,6 @@ CREATE TABLE `avaliacoes` (
   CONSTRAINT `avaliacoes_ibfk_2` FOREIGN KEY (`id_turma`) REFERENCES `turma` (`id_turma`)
 );
 
-DROP TABLE IF EXISTS `boletim`;
 CREATE TABLE `boletim` (
   `id_boletim` bigint NOT NULL,
   `observacoes` text,
@@ -134,7 +125,6 @@ CREATE TABLE `boletim` (
   CONSTRAINT `fk_boletim_disciplinas1` FOREIGN KEY (`id_disciplinas`) REFERENCES `disciplinas` (`id_disciplinas`)
 );
 
-DROP TABLE IF EXISTS `frequencia`;
 CREATE TABLE `frequencia` (
   `id_frequencia` bigint NOT NULL AUTO_INCREMENT,
   `id_aluno` bigint NOT NULL,
@@ -150,7 +140,6 @@ CREATE TABLE `frequencia` (
   CONSTRAINT `frequencia_ibfk_3` FOREIGN KEY (`id_turma`) REFERENCES `turma` (`id_turma`)
 );
 
-DROP TABLE IF EXISTS `login`;
 CREATE TABLE `login` (
   `id_login` bigint AUTO_INCREMENT NOT NULL,
   `tipo_usuario` enum('admin','professor','aluno','responsavel') NOT NULL,
@@ -164,7 +153,6 @@ CREATE TABLE `login` (
   KEY `idx_login_usuario` (`tipo_usuario`,`id_usuario`)
 );
 
-DROP TABLE IF EXISTS `turma_disciplina_professor`;
 CREATE TABLE `turma_disciplina_professor` (
   `id_turma` bigint AUTO_INCREMENT NOT NULL,
   `id_disciplinas` bigint NOT NULL,
@@ -177,7 +165,6 @@ CREATE TABLE `turma_disciplina_professor` (
   CONSTRAINT `fk_turma_disciplina_professor_turma1` FOREIGN KEY (`id_turma`) REFERENCES `turma` (`id_turma`)
 );
 
-DROP TABLE IF EXISTS `eventos`;
 CREATE TABLE `eventos` (
   `id_evento` bigint AUTO_INCREMENT NOT NULL,
   `nome_evento` text NOT NULL,
