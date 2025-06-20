@@ -17,9 +17,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import com.br.api.dto.aluno.*;
-import com.br.api.exception.AlunoNotFoundException;
+import com.br.api.exception.AlunoException;
+import com.br.api.exception.TurmaException;
 import com.br.api.exception.InvalidCredentialException;
-import com.br.api.exception.TurmaNotFoundException;
 
 import java.util.List;
 
@@ -36,7 +36,7 @@ public class AlunoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AlunoDetalhesDTO> buscarPorId(@PathVariable Long id) throws AlunoNotFoundException {
+    public ResponseEntity<AlunoDetalhesDTO> buscarPorId(@PathVariable Long id) throws AlunoException {
         return ResponseEntity.ok(alunoService.buscarAlunoPorId(id));
     }
 
@@ -47,9 +47,21 @@ public class AlunoController {
 
     @PostMapping
     public ResponseEntity<AlunoDTO> cadastrarAluno(@Valid @RequestBody AlunoCadastroDTO dto) throws 
-    AlunoNotFoundException, InvalidCredentialException {
+    AlunoException, InvalidCredentialException {
         AlunoDTO aluno = alunoService.cadastrarAluno(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(aluno);
+    }
+
+    @PostMapping("/cadastro")
+    public ResponseEntity<?> cadastrarAlunoComLogin(@RequestBody CadastroAlunoComLoginDTO dto) 
+    throws AlunoException, InvalidCredentialException {
+        try {
+            alunoService.cadastrarAlunoComLogin(dto);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Aluno e login cadastrados com sucesso!");
+            
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PutMapping("/{id}")
@@ -57,13 +69,13 @@ public class AlunoController {
         @PathVariable Long id,
         @Valid @RequestBody AlunoCadastroDTO dto
     )
-    throws AlunoNotFoundException, TurmaNotFoundException, InvalidCredentialException {
+    throws AlunoException, TurmaException, InvalidCredentialException {
         return ResponseEntity.ok(alunoService.atualizar(id, dto));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluirAluno(@PathVariable Long id) throws 
-    AlunoNotFoundException {
+    AlunoException {
         alunoService.excluirAluno(id);
         return ResponseEntity.noContent().build();
     }

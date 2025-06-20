@@ -6,14 +6,20 @@ import org.springframework.stereotype.Service;
 import com.br.api.dto.professor.ProfessorCadastroDTO;
 import com.br.api.dto.professor.ProfessorDTO;
 import com.br.api.exception.InvalidCredentialException;
-import com.br.api.exception.ProfessorNotFoundException;
+import com.br.api.exception.ProfessorException;
 import com.br.api.mapper.ProfessorMapper;
 import com.br.api.model.Professor;
 import com.br.api.model.Disciplina;
+import com.br.api.model.Endereco;
 import com.br.api.repository.ProfessorRepository;
 import com.br.api.repository.DisciplinaRepository;
+import com.br.api.repository.EnderecoRepository;
+import com.br.api.repository.LoginRepository;
+import com.br.api.model.Login;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import com.br.api.dto.professor.ProfessorCadastroComLoginDTO;
 
 @Service
 @Transactional
@@ -23,6 +29,9 @@ public class ProfessorService {
     private final ProfessorRepository professorRepository;
     private final DisciplinaRepository disciplinaRepository;
     private final ProfessorMapper professorMapper;
+    private final EnderecoRepository enderecoRepository;
+    private final LoginRepository loginRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public List<ProfessorDTO> listarTodos() {
         return professorRepository.findAll()
@@ -31,10 +40,10 @@ public class ProfessorService {
             .collect(Collectors.toList());
     }
 
-    public ProfessorDTO buscarPorId(Long id) throws ProfessorNotFoundException {
+    public ProfessorDTO buscarPorId(Long id) throws ProfessorException {
         return professorRepository.findById(id)
             .map(professorMapper::toDTO)
-            .orElseThrow(() -> new ProfessorNotFoundException("Professor não encontrado"));
+            .orElseThrow(() -> new ProfessorException("Professor não encontrado"));
     }
 
     @Transactional
@@ -64,14 +73,21 @@ public class ProfessorService {
             professor.setDisciplinas(disciplina);
         }
 
+        // Salvar endereço se existir
+        if (professor.getEndereco() != null) {
+            Endereco endereco = professor.getEndereco();
+            endereco = enderecoRepository.save(endereco);
+            professor.setEndereco(endereco);
+        }
+
         professor = professorRepository.save(professor);
         return professorMapper.toDTO(professor);
     }
 
     @Transactional
-    public ProfessorDTO atualizar(Long id, ProfessorCadastroDTO dto) throws ProfessorNotFoundException, InvalidCredentialException {
+    public ProfessorDTO atualizar(Long id, ProfessorCadastroDTO dto) throws ProfessorException, InvalidCredentialException {
         Professor professor = professorRepository.findById(id)
-            .orElseThrow(() -> new ProfessorNotFoundException("Professor não encontrado"));
+            .orElseThrow(() -> new ProfessorException("Professor não encontrado"));
 
         validarDadosProfessor(dto);
 
@@ -106,9 +122,9 @@ public class ProfessorService {
     }
 
     @Transactional
-    public void excluir(Long id) throws ProfessorNotFoundException {
+    public void excluir(Long id) throws ProfessorException {
         if (!professorRepository.existsById(id)) {
-            throw new ProfessorNotFoundException("Professor não encontrado");
+            throw new ProfessorException("Professor não encontrado");
         }
         professorRepository.deleteById(id);
     }
@@ -124,5 +140,21 @@ public class ProfessorService {
         if (dto.email() != null && !dto.email().matches(emailRegex)) {
             throw new InvalidCredentialException("Formato inválido do Email " + dto.email());
         }
+    }
+
+    @Transactional
+    public void cadastrarComLogin(ProfessorCadastroComLoginDTO dto) throws InvalidCredentialException {
+        // Validar gestor
+        Login.TipoUsuario tipoGestor = Login.TipoUsuario.GESTOR;
+        Login gestor = loginRepository.findByNomeUsuarioAndTipoUsuario(dto.nomeUsuarioGestor(), tipoGestor)
+            .orElseThrow(() -> new InvalidCredentialException("Credenciais do gestor inválidas ou gestor não encontrado!"));
+        if (!passwordEncoder.matches(dto.senhaGestor(), gestor.getSenha())) {
+            throw new InvalidCredentialException("Senha do gestor inválida!");
+        }
+        // Reaproveitar lógica do método cadastrar
+        ProfessorCadastroDTO cadastroDTO = new ProfessorCadastroDTO(
+            dto.nome(), dto.cpf(), dto.rg(), dto.telefone(), dto.email(), dto.disciplina(), dto.turma(), dto.endereco()
+        );
+        this.cadastrar(cadastroDTO);
     }
 }

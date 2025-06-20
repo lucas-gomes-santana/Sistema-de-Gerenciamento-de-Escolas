@@ -6,9 +6,9 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.br.api.dto.turmadisciplinaprofessor.TurmaDisciplinaProfessorDTO;
-import com.br.api.exception.DisciplinaNotFoundException;
-import com.br.api.exception.ProfessorNotFoundException;
-import com.br.api.exception.TurmaNotFoundException;
+import com.br.api.exception.DisciplinaException;
+import com.br.api.exception.ProfessorException;
+import com.br.api.exception.TurmaException;
 import com.br.api.mapper.TurmaDisciplinaProfessorMapper;
 import com.br.api.model.TurmaDisciplinaProfessor;
 import com.br.api.repository.DisciplinaRepository;
@@ -59,17 +59,17 @@ public class TurmaDisciplinaProfessorService {
     }
 
     public TurmaDisciplinaProfessorDTO vincular(TurmaDisciplinaProfessorDTO dto) 
-    throws TurmaNotFoundException, DisciplinaNotFoundException, ProfessorNotFoundException {
+    throws TurmaException, DisciplinaException, ProfessorException {
 
         // Verificar se as entidades existem
         var turma = turmaRepository.findById(dto.idTurma())
-            .orElseThrow(() -> new TurmaNotFoundException("Turma não encontrada"));
+            .orElseThrow(() -> new TurmaException("Turma não encontrada"));
         
         var disciplina = disciplinaRepository.findById(dto.idDisciplina())
-            .orElseThrow(() -> new DisciplinaNotFoundException("Disciplina não encontrada"));
+            .orElseThrow(() -> new DisciplinaException("Disciplina não encontrada"));
         
         var professor = professorRepository.findById(dto.idProfessor())
-            .orElseThrow(() -> new ProfessorNotFoundException("Professor não encontrado"));
+            .orElseThrow(() -> new ProfessorException("Professor não encontrado"));
 
         TurmaDisciplinaProfessor entity = mapper.toEntity(dto, turma, disciplina, professor);
         entity = repository.save(entity);

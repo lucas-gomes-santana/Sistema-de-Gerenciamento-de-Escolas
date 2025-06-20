@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import com.br.api.dto.professor.ProfessorCadastroDTO;
 import com.br.api.dto.professor.ProfessorDTO;
 import com.br.api.model.Professor;
+import com.br.api.model.Endereco;
 
 @Component
 public class ProfessorMapper {
@@ -38,7 +39,14 @@ public class ProfessorMapper {
         professor.setTelefone(dto.telefone());
         professor.setEmail(dto.email());
         professor.setStatus("Ativo");
-
+        if (dto.endereco() != null) {
+            Endereco endereco = new Endereco();
+            endereco.setNome_rua(dto.endereco().rua());
+            endereco.setNome_bairro(dto.endereco().bairro());
+            endereco.setCep(dto.endereco().cep());
+            endereco.setComplemento(dto.endereco().complemento());
+            professor.setEndereco(endereco);
+        }
         return professor;
     }
 }

@@ -24,7 +24,7 @@ CREATE TABLE `endereco` (
   `cep` varchar(15) DEFAULT NULL,
   `complemento` varchar(100) DEFAULT NULL,
   `tipo_entidade` enum('professor','aluno') NOT NULL,
-  `id_entidade` bigint NOT NULL,
+  `id_entidade` bigint NULL,
   PRIMARY KEY (`id_endereco`),
   UNIQUE KEY `id_endereco_UNIQUE` (`id_endereco`),
   UNIQUE KEY `complemento_UNIQUE` (`complemento`),
@@ -37,10 +37,13 @@ CREATE TABLE `responsaveis` (
   `cpf` varchar(20) NOT NULL,
   `telefone` varchar(25) NOT NULL,
   `rg` varchar(20) NOT NULL,
+  `id_endereco` bigint NULL,
   PRIMARY KEY (`id_responsaveis`),
   UNIQUE KEY `id_responsaveis_UNIQUE` (`id_responsaveis`),
   UNIQUE KEY `cpf_UNIQUE` (`cpf`),
-  UNIQUE KEY `rg_UNIQUE` (`rg`)
+  UNIQUE KEY `rg_UNIQUE` (`rg`),
+  KEY `fk_responsavel_endereco_idx` (`id_endereco`),
+  CONSTRAINT `fk_responsavel_endereco` FOREIGN KEY (`id_endereco`) REFERENCES `endereco` (`id_endereco`)
 );
 
 CREATE TABLE `aluno` (
@@ -72,12 +75,15 @@ CREATE TABLE `professor` (
   `email` varchar(30) DEFAULT NULL,
   `status` varchar(100) DEFAULT NULL,
   `disciplinas_id_disciplinas` bigint NULL,
+  `id_endereco` bigint NULL,
   PRIMARY KEY (`id_professor`),
   UNIQUE KEY `id_professor_UNIQUE` (`id_professor`),
   UNIQUE KEY `cpf_UNIQUE` (`cpf`),
   UNIQUE KEY `rg_UNIQUE` (`rg`),
   KEY `fk_professor_disciplinas1_idx` (`disciplinas_id_disciplinas`),
-  CONSTRAINT `fk_professor_disciplinas1` FOREIGN KEY (`disciplinas_id_disciplinas`) REFERENCES `disciplinas` (`id_disciplinas`)
+  KEY `fk_professor_endereco_idx` (`id_endereco`),
+  CONSTRAINT `fk_professor_disciplinas1` FOREIGN KEY (`disciplinas_id_disciplinas`) REFERENCES `disciplinas` (`id_disciplinas`),
+  CONSTRAINT `fk_professor_endereco` FOREIGN KEY (`id_endereco`) REFERENCES `endereco` (`id_endereco`)
 );
 
 CREATE TABLE `aluno_responsavel` (

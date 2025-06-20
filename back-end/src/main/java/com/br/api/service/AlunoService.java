@@ -10,6 +10,7 @@ import com.br.api.mapper.AlunoMapper;
 import com.br.api.repository.AlunoRepository;
 import com.br.api.repository.TurmaRepository;
 import com.br.api.repository.EnderecoRepository;
+import com.br.api.repository.LoginRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import com.br.api.model.Aluno;
@@ -17,6 +18,9 @@ import com.br.api.model.Turma;
 import com.br.api.model.Endereco;
 import com.br.api.model.Endereco.TipoEntidade;
 import java.util.List;
+import com.br.api.dto.aluno.CadastroAlunoComLoginDTO;
+import com.br.api.model.Login;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Service
 @Transactional
@@ -26,7 +30,9 @@ public class AlunoService {
     private final AlunoRepository alunoRepository;
     private final TurmaRepository turmaRepository;
     private final EnderecoRepository enderecoRepository;
+    private final LoginRepository loginRepository;
     private final AlunoMapper alunoMapper;
+    private final PasswordEncoder passwordEncoder;
     
     public List<AlunoDTO> listarTodos() {
         return alunoRepository.findAll()
@@ -42,10 +48,10 @@ public class AlunoService {
             .collect(Collectors.toList());
     }
 
-    public AlunoDetalhesDTO buscarAlunoPorId(Long id) throws AlunoNotFoundException {
+    public AlunoDetalhesDTO buscarAlunoPorId(Long id) throws AlunoException {
         return alunoRepository.findById(id)
             .map(alunoMapper::toDetalhesDTO)
-            .orElseThrow(() -> new AlunoNotFoundException("Aluno de ID "+ id +" não encontrado"));
+            .orElseThrow(() -> new AlunoException("Aluno de ID "+ id +" não encontrado"));
     }
 
     public boolean validarDadosAluno(Aluno aluno) throws InvalidCredentialException {
@@ -68,7 +74,7 @@ public class AlunoService {
     }
 
     // Método de cadastro de novos alunos
-    public AlunoDTO cadastrarAluno(AlunoCadastroDTO dto) throws AlunoNotFoundException, InvalidCredentialException {
+    public AlunoDTO cadastrarAluno(AlunoCadastroDTO dto) throws AlunoException, InvalidCredentialException {
         Aluno aluno = alunoMapper.toEntity(dto);
 
         // Validar dados antes de cadastrar
@@ -82,7 +88,7 @@ public class AlunoService {
 
         // Verifica se a turma existe
         Turma turma = turmaRepository.findByNome_turma(dto.turma().nomeTurma())
-            .orElseThrow(() -> new AlunoNotFoundException("Turma não encontrada"));
+            .orElseThrow(() -> new AlunoException("Turma não encontrada"));
         aluno.setTurma(turma);
 
         // Primeiro salva o aluno para obter o ID
@@ -106,9 +112,9 @@ public class AlunoService {
 
     // Método para atualizar dados de alunos do sistema
     public AlunoDTO atualizar(Long id, AlunoCadastroDTO dto) throws 
-    AlunoNotFoundException, TurmaNotFoundException, InvalidCredentialException {
+    AlunoException, TurmaException, InvalidCredentialException {
         Aluno aluno = alunoRepository.findById(id)
-            .orElseThrow(() -> new AlunoNotFoundException("Aluno não encontrado com ID: "+id));
+            .orElseThrow(() -> new AlunoException("Aluno não encontrado com ID: "+id));
 
         // Validar dados antes de atualizar
         aluno.setNome_aluno(dto.nome());
@@ -121,7 +127,7 @@ public class AlunoService {
 
         // Atualiza a turma se necessário
         Turma novaTurma = turmaRepository.findByNome_turma(dto.turma().nomeTurma())
-            .orElseThrow(() -> new TurmaNotFoundException("Turma não encontrada"));
+            .orElseThrow(() -> new TurmaException("Turma não encontrada"));
         if (!novaTurma.getId_turma().equals(aluno.getTurma().getId_turma())) {
             aluno.setTurma(novaTurma);
         }
@@ -140,10 +146,55 @@ public class AlunoService {
     }
 
     // Método para excluir alunos do sistema
-    public void excluirAluno(Long id) throws AlunoNotFoundException {
+    public void excluirAluno(Long id) throws AlunoException {
         if (!alunoRepository.existsById(id)) {
-            throw new AlunoNotFoundException("Aluno de ID " + id +  " não encontrado!");
+            throw new AlunoException("Aluno de ID " + id +  " não encontrado!");
         }
         alunoRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void cadastrarAlunoComLogin(CadastroAlunoComLoginDTO dto) throws AlunoException, InvalidCredentialException {
+        // 0. Validar gestor
+        Login.TipoUsuario tipoGestor = Login.TipoUsuario.GESTOR;
+        Login gestor = loginRepository.findByNomeUsuarioAndTipoUsuario(dto.nomeUsuarioGestor(), tipoGestor)
+            .orElseThrow(() -> new InvalidCredentialException("Credenciais do gestor inválidas ou gestor não encontrado!"));
+        if (!passwordEncoder.matches(dto.senhaGestor(), gestor.getSenha())) {
+            throw new InvalidCredentialException("Senha do gestor inválida!");
+        }
+        // 1. Criar e salvar endereço
+        Endereco.TipoEntidade tipoEntidade = Endereco.TipoEntidade.valueOf(dto.tipoUsuario().toUpperCase());
+        Endereco endereco = new Endereco();
+        endereco.setNome_rua(dto.endereco().rua());
+        endereco.setNome_bairro(dto.endereco().bairro());
+        endereco.setCep(dto.endereco().cep());
+        endereco.setComplemento(dto.endereco().complemento());
+        endereco.setTipo_entidade(tipoEntidade);
+        endereco.setId_entidade(0L); // temporário
+        endereco = enderecoRepository.save(endereco);
+
+        // 2. Criar e salvar aluno
+        Aluno aluno = new Aluno();
+        aluno.setNome_aluno(dto.nome());
+        aluno.setCpf(dto.cpf());
+        aluno.setRg(dto.rg());
+        aluno.setTelefone(dto.telefone());
+        aluno.setEmail(dto.email());
+        aluno.setTurma(turmaRepository.findByNome_turma(dto.turma().nomeTurma()).orElseThrow(() -> new AlunoException("Turma não encontrada")));
+        aluno.setEndereco(endereco);
+        aluno = alunoRepository.save(aluno);
+
+        // 3. Atualizar id_entidade do endereço
+        endereco.setId_entidade(aluno.getId_aluno());
+        enderecoRepository.save(endereco);
+
+        // 4. Criar e salvar login
+        Login.TipoUsuario tipoUsuario = Login.TipoUsuario.valueOf(dto.tipoUsuario().toUpperCase());
+        Login login = new Login();
+        login.setNome_usuario(dto.nomeUsuario());
+        login.setSenha(passwordEncoder.encode(dto.senha()));
+        login.setTipo_usuario(tipoUsuario);
+        login.setId_usuario(aluno.getId_aluno());
+        loginRepository.save(login);
     }
 }

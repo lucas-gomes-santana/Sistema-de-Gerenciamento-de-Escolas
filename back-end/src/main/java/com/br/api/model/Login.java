@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.Setter;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.EnumType;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "login")
@@ -28,7 +29,7 @@ public class Login {
     @Column(name = "nome_usuario", unique = true, nullable = false)
     private String nome_usuario;
 
-    @NotBlank(message = "O tipo de usuário é obrigatório")
+    @NotNull(message = "O tipo de usuário é obrigatório")
     @Column(name = "tipo_usuario")
     @Enumerated(EnumType.STRING)
     private TipoUsuario tipo_usuario;
@@ -44,6 +45,7 @@ public class Login {
     private LocalDateTime data_criacao;
 
     public enum TipoUsuario {
+        GESTOR,
         ADMIN,
         PROFESSOR,
         ALUNO,

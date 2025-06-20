@@ -5,9 +5,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.br.api.dto.turmadisciplinaprofessor.TurmaDisciplinaProfessorDTO;
 import com.br.api.service.TurmaDisciplinaProfessorService;
-import com.br.api.exception.TurmaNotFoundException;
-import com.br.api.exception.ProfessorNotFoundException;
-import com.br.api.exception.DisciplinaNotFoundException;
+import com.br.api.exception.TurmaException;
+import com.br.api.exception.ProfessorException;
+import com.br.api.exception.DisciplinaException;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -39,7 +39,7 @@ public class TurmaDisciplinaProfessorController {
 
     @PostMapping
     public ResponseEntity<TurmaDisciplinaProfessorDTO> vincular(@RequestBody TurmaDisciplinaProfessorDTO dto) 
-        throws TurmaNotFoundException, ProfessorNotFoundException, DisciplinaNotFoundException {
+        throws TurmaException, ProfessorException, DisciplinaException {
         return ResponseEntity.ok(service.vincular(dto));
     }
 

@@ -51,6 +51,10 @@ public class Professor {
     @OneToMany(mappedBy = "professor", fetch = FetchType.LAZY)
     private List<TurmaDisciplinaProfessor> turmaDisciplinaProfessores;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_endereco")
+    private Endereco endereco;
+
     public enum StatusProfessor {
         ATIVO, INATIVO
     }

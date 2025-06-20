@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.br.api.dto.turma.TurmaDTO;
-import com.br.api.exception.TurmaNotFoundException;
+import com.br.api.exception.TurmaException;
 import com.br.api.dto.turma.TurmaCadastroDTO;
 import com.br.api.service.TurmaService;
 
@@ -31,13 +31,13 @@ public class TurmaController {
     private final TurmaService turmaService;
 
     @PostMapping
-    public ResponseEntity<TurmaDTO> criar(@Valid @RequestBody TurmaCadastroDTO dto) {
+    public ResponseEntity<TurmaDTO> criar(@Valid @RequestBody TurmaCadastroDTO dto) throws TurmaException {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(turmaService.criarTurma(dto));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TurmaDTO> buscarPorId(@PathVariable Long id) throws TurmaNotFoundException {
+    public ResponseEntity<TurmaDTO> buscarPorId(@PathVariable Long id) throws TurmaException {
         return ResponseEntity.ok(turmaService.buscarPorId(id));
     }
 
@@ -48,12 +48,12 @@ public class TurmaController {
 
     @PutMapping("/{id}")
     public ResponseEntity<TurmaDTO> atualizar(@PathVariable Long id, @Valid @RequestBody TurmaCadastroDTO dto) 
-    throws TurmaNotFoundException {
+    throws TurmaException {
         return ResponseEntity.ok(turmaService.atualizar(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletarTurma(@PathVariable Long id) throws TurmaNotFoundException {
+    public ResponseEntity<Void> deletarTurma(@PathVariable Long id) throws TurmaException {
         turmaService.deletarTurma(id);
         return ResponseEntity.noContent().build();
     }

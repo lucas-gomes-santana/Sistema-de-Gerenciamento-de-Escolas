@@ -36,4 +36,8 @@ public class Responsavel {
 
     @ManyToMany(mappedBy = "responsaveis", fetch = FetchType.LAZY)
     private List<Aluno> alunos;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_endereco")
+    private Endereco endereco;
 }

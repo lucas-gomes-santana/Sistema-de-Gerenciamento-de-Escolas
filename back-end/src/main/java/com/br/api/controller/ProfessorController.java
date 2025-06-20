@@ -6,8 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.br.api.dto.professor.ProfessorCadastroDTO;
 import com.br.api.dto.professor.ProfessorDTO;
+import com.br.api.dto.professor.ProfessorCadastroComLoginDTO;
 import com.br.api.exception.InvalidCredentialException;
-import com.br.api.exception.ProfessorNotFoundException;
+import com.br.api.exception.ProfessorException;
 import com.br.api.service.ProfessorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,7 @@ public class ProfessorController {
     public ResponseEntity<ProfessorDTO> buscarPorId(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(professorService.buscarPorId(id));
-        } catch (ProfessorNotFoundException e) {
+        } catch (ProfessorException e) {
             return ResponseEntity.notFound().build();
         }
     }
@@ -45,12 +46,22 @@ public class ProfessorController {
         }
     }
 
+    @PostMapping("/cadastro")
+    public ResponseEntity<?> cadastrarComLogin(@RequestBody ProfessorCadastroComLoginDTO dto) throws InvalidCredentialException {
+        try {
+            professorService.cadastrarComLogin(dto);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Professor cadastrado com sucesso!");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<ProfessorDTO> atualizar(@PathVariable Long id, @Valid @RequestBody ProfessorCadastroDTO dto) throws InvalidCredentialException {
         try {
             return ResponseEntity.ok(professorService.atualizar(id, dto));
         } 
-        catch (ProfessorNotFoundException e) {
+        catch (ProfessorException e) {
             return ResponseEntity.notFound().build();
         } 
         catch (IllegalArgumentException e) {
@@ -63,7 +74,7 @@ public class ProfessorController {
         try {
             professorService.excluir(id);
             return ResponseEntity.noContent().build();
-        } catch (ProfessorNotFoundException e) {
+        } catch (ProfessorException e) {
             return ResponseEntity.notFound().build();
         }
     }
