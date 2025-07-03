@@ -21,5 +21,8 @@ public interface TurmaMapper {
 
     @Mapping(target = "nome_turma", source = "nome")
     @Mapping(target = "turno", source = "turno")
+    @Mapping(target = "id_turma", ignore = true)
+    @Mapping(target = "alunos", ignore = true)
+    @Mapping(target = "turmaDisciplinaProfessores", ignore = true)
     void updateEntity(@MappingTarget Turma turma, TurmaCadastroDTO dto);
 }
