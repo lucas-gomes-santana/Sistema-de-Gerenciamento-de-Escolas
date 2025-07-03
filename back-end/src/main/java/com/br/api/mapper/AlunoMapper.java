@@ -1,58 +1,43 @@
 package com.br.api.mapper;
 
-import com.br.api.dto.aluno.*;
+import com.br.api.dto.aluno.AlunoCadastroDTO;
+import com.br.api.dto.aluno.AlunoDTO;
+import com.br.api.dto.aluno.AlunoDetalhesDTO;
 import com.br.api.model.Aluno;
-import com.br.api.model.Aluno.StatusAluno;
-import com.br.api.dto.turma.TurmaDTO;
-import org.springframework.stereotype.Component;
+import org.mapstruct.*;
 
-@Component
-public class AlunoMapper {
 
-    public AlunoDTO toDTO(Aluno aluno) {
-        if (aluno == null) return null;
+@Mapper(componentModel = "spring", uses = {TurmaMapper.class})
+public interface AlunoMapper {
+    @Mapping(target = "id", source = "id_aluno")
+    @Mapping(target = "nome", source = "nome_aluno")
+    @Mapping(target = "cpf", source = "cpf")
+    @Mapping(target = "rg", source = "rg")
+    @Mapping(target = "telefone", source = "telefone")
+    @Mapping(target = "email", source = "email")
+    @Mapping(target = "status", source = "status")
+    @Mapping(target = "nomeTurma", source = "turma.nome_turma", defaultValue = "")
+    AlunoDTO toDTO(Aluno aluno);
 
-        return new AlunoDTO(
-            aluno.getId_aluno(),
-            aluno.getNome_aluno(),
-            aluno.getCpf(),
-            aluno.getRg(),
-            aluno.getTelefone(),
-            aluno.getEmail(),
-            aluno.getStatus(),
-            aluno.getTurma() != null ? aluno.getTurma().getNome_turma() : null
-        );
-    }
+    @Mapping(target = "id", source = "id_aluno")
+    @Mapping(target = "nome", source = "nome_aluno")
+    @Mapping(target = "cpf", source = "cpf")
+    @Mapping(target = "rg", source = "rg")
+    @Mapping(target = "telefone", source = "telefone")
+    @Mapping(target = "email", source = "email")
+    @Mapping(target = "status", source = "status")
+    @Mapping(target = "turma", source = "turma")
+    AlunoDetalhesDTO toDetalhesDTO(Aluno aluno);
 
-    public AlunoDetalhesDTO toDetalhesDTO(Aluno aluno) {
-        if (aluno == null) return null;
-
-        return new AlunoDetalhesDTO(
-            aluno.getId_aluno(),
-            aluno.getNome_aluno(),
-            aluno.getCpf(),
-            aluno.getRg(),
-            aluno.getTelefone(),
-            aluno.getEmail(),
-            aluno.getStatus(),
-            aluno.getTurma() != null ? new TurmaDTO(
-                aluno.getTurma().getId_turma(),
-                aluno.getTurma().getNome_turma(),
-                aluno.getTurma().getTurno()
-            ) : null
-        );
-    }
-
-    public Aluno toEntity(AlunoCadastroDTO dto) {
-        if (dto == null) return null;
-
-        Aluno aluno = new Aluno();
-        aluno.setNome_aluno(dto.nome());
-        aluno.setCpf(dto.cpf());
-        aluno.setRg(dto.rg());
-        aluno.setTelefone(dto.telefone());
-        aluno.setEmail(dto.email());
-        aluno.setStatus(StatusAluno.PRESENTE);
-        return aluno;
-    }
+    @Mapping(target = "id_aluno", ignore = true)
+    @Mapping(target = "nome_aluno", source = "nome")
+    @Mapping(target = "cpf", source = "cpf")
+    @Mapping(target = "rg", source = "rg")
+    @Mapping(target = "telefone", source = "telefone")
+    @Mapping(target = "email", source = "email")
+    @Mapping(target = "status", expression = "java(com.br.api.model.Aluno.StatusAluno.PRESENTE)")
+    @Mapping(target = "turma", ignore = true)
+    @Mapping(target = "responsaveis", ignore = true)
+    @Mapping(target = "endereco", ignore = true)
+    Aluno toEntity(AlunoCadastroDTO dto);
 }

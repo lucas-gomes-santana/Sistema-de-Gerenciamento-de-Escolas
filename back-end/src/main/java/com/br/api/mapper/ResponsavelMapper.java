@@ -1,44 +1,33 @@
 package com.br.api.mapper;
 
-import org.springframework.stereotype.Component;
 import com.br.api.dto.responsaveis.ResponsavelCadastroDTO;
 import com.br.api.dto.responsaveis.ResponsaviesDTO;
 import com.br.api.model.Responsavel;
-import com.br.api.model.Endereco;
+import org.mapstruct.*;
 
-@Component
-public class ResponsavelMapper {
-    public ResponsaviesDTO toDTO(Responsavel responsavel) {
-        return new ResponsaviesDTO(
-            responsavel.getId_responsavies(),
-            responsavel.getNome_responsavel(),
-            responsavel.getCpf(),
-            responsavel.getRg(),
-            responsavel.getTelefone()
-        );
-    }
+@Mapper(componentModel = "spring", uses = {EnderecoMapper.class})
+public interface ResponsavelMapper {
+    @Mapping(target = "id", source = "id_responsavies")
+    @Mapping(target = "nome", source = "nome_responsavel")
+    @Mapping(target = "cpf", source = "cpf")
+    @Mapping(target = "rg", source = "rg")
+    @Mapping(target = "telefone", source = "telefone")
+    ResponsaviesDTO toDTO(Responsavel responsavel);
 
-    public Responsavel toEntity(ResponsavelCadastroDTO dto) {
-        Responsavel responsavel = new Responsavel();
-        responsavel.setNome_responsavel(dto.nome());
-        responsavel.setCpf(dto.cpf());
-        responsavel.setRg(dto.rg());
-        responsavel.setTelefone(dto.telefone());
-        if (dto.endereco() != null) {
-            Endereco endereco = new Endereco();
-            endereco.setNome_rua(dto.endereco().rua());
-            endereco.setNome_bairro(dto.endereco().bairro());
-            endereco.setCep(dto.endereco().cep());
-            endereco.setComplemento(dto.endereco().complemento());
-            responsavel.setEndereco(endereco);
-        }
-        return responsavel;
-    }
+    @Mapping(target = "id_responsavies", ignore = true)
+    @Mapping(target = "nome_responsavel", source = "nome")
+    @Mapping(target = "cpf", source = "cpf")
+    @Mapping(target = "rg", source = "rg")
+    @Mapping(target = "telefone", source = "telefone")
+    @Mapping(target = "endereco", source = "endereco")
+    @Mapping(target = "alunos", ignore = true)
+    Responsavel toEntity(ResponsavelCadastroDTO dto);
 
-    public void updateEntity(Responsavel responsavel, ResponsavelCadastroDTO dto) {
-        responsavel.setNome_responsavel(dto.nome());
-        responsavel.setCpf(dto.cpf());
-        responsavel.setRg(dto.rg());
-        responsavel.setTelefone(dto.telefone());
-    }
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "nome_responsavel", source = "nome")
+    @Mapping(target = "cpf", source = "cpf")
+    @Mapping(target = "rg", source = "rg")
+    @Mapping(target = "telefone", source = "telefone")
+    @Mapping(target = "endereco", source = "endereco")
+    void updateEntity(@MappingTarget Responsavel responsavel, ResponsavelCadastroDTO dto);
 } 

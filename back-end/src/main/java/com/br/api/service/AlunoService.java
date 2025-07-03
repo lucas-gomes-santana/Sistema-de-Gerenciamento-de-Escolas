@@ -58,18 +58,20 @@ public class AlunoService {
         if(aluno == null) {
             throw new InvalidCredentialException("O aluno deve ter um nome");
         }
-
-        String telefoneRegex = "^\\(\\d{2}\\) \\d{5}-\\d{4}$";
-        String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
-
-        if(!aluno.getTelefone().matches(telefoneRegex)) {
+        try {
+            new com.br.api.valueobject.Telefone(aluno.getTelefone());
+        } 
+        catch (Exception e) {
             throw new InvalidCredentialException("Formato inválido do Telefone " + aluno.getTelefone() + " do aluno " + aluno.getNome_aluno());
         }
-
-        if (aluno.getEmail() != null && !aluno.getEmail().matches(emailRegex)) {
-            throw new InvalidCredentialException("Formato inválido do Email " + aluno.getEmail());
+        if (aluno.getEmail() != null) {
+            try {
+                new com.br.api.valueobject.Email(aluno.getEmail());
+            } 
+            catch (Exception e) {
+                throw new InvalidCredentialException("Formato inválido do Email " + aluno.getEmail());
+            }
         }
-
         return true;
     }
 

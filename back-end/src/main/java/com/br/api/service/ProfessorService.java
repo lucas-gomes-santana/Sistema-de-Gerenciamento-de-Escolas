@@ -130,15 +130,19 @@ public class ProfessorService {
     }
 
     private void validarDadosProfessor(ProfessorCadastroDTO dto) throws InvalidCredentialException {
-        String telefoneRegex = "^\\(\\d{2}\\) \\d{5}-\\d{4}$";
-        String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
-
-        if (!dto.telefone().matches(telefoneRegex)) {
+        try {
+            new com.br.api.valueobject.Telefone(dto.telefone());
+        } 
+        catch (Exception e) {
             throw new InvalidCredentialException("Formato inválido do Telefone " + dto.telefone());
         }
-
-        if (dto.email() != null && !dto.email().matches(emailRegex)) {
-            throw new InvalidCredentialException("Formato inválido do Email " + dto.email());
+        if (dto.email() != null) {
+            try {
+                new com.br.api.valueobject.Email(dto.email());
+            } 
+            catch (Exception e) {
+                throw new InvalidCredentialException("Formato inválido do Email " + dto.email());
+            }
         }
     }
 
