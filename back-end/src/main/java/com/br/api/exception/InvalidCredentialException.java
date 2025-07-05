@@ -1,6 +1,6 @@
 package com.br.api.exception;
 
-public class InvalidCredentialException extends Throwable{
+public class InvalidCredentialException extends RuntimeException {
     public InvalidCredentialException(String message) {
         super(message);
     }

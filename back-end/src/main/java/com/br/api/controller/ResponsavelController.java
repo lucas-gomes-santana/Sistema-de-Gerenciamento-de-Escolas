@@ -1,7 +1,9 @@
 package com.br.api.controller;
 
 import com.br.api.dto.responsaveis.ResponsavelCadastroDTO;
+import com.br.api.dto.responsaveis.ResponsavelAtualizacaoDTO;
 import com.br.api.dto.responsaveis.ResponsaviesDTO;
+import com.br.api.dto.responsaveis.ResponsaveisDetalhesDTO;
 import com.br.api.service.ResponsavelService;
 import com.br.api.exception.ResponsavelException;
 import lombok.RequiredArgsConstructor;
@@ -29,12 +31,12 @@ public class ResponsavelController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResponsaviesDTO> buscarPorId(@PathVariable Long id) throws ResponsavelException {
+    public ResponseEntity<ResponsaveisDetalhesDTO> buscarPorId(@PathVariable Long id) throws ResponsavelException {
         return ResponseEntity.ok(responsavelService.buscarPorId(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponsaviesDTO> atualizar(@PathVariable Long id, @Valid @RequestBody ResponsavelCadastroDTO dto) throws ResponsavelException {
+    public ResponseEntity<ResponsaviesDTO> atualizar(@PathVariable Long id, @Valid @RequestBody ResponsavelAtualizacaoDTO dto) throws ResponsavelException {
         return ResponseEntity.ok(responsavelService.atualizar(id, dto));
     }
 

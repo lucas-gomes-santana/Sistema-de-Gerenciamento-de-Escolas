@@ -6,8 +6,7 @@ Este projeto consiste em uma aplicação CRUD de um sistema web para gerenciamen
 
 - SQL e MySQL (Banco de Dados);
 - Java e Spring Boot (API REST do sistema);
-- Figma (Design das telas);
-- ReactJs (Front-End do sistema)
+- React (Front-End do sistema)
 
 <hr>
 

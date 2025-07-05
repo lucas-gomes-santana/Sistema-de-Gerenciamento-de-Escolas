@@ -5,7 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.br.api.dto.professor.ProfessorCadastroDTO;
+import com.br.api.dto.professor.ProfessorAtualizacaoDTO;
 import com.br.api.dto.professor.ProfessorDTO;
+import com.br.api.dto.professor.ProfessorDetalhesDTO;
 import com.br.api.dto.professor.ProfessorCadastroComLoginDTO;
 import com.br.api.exception.InvalidCredentialException;
 import com.br.api.exception.ProfessorException;
@@ -27,7 +29,7 @@ public class ProfessorController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProfessorDTO> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<ProfessorDetalhesDTO> buscarPorId(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(professorService.buscarPorId(id));
         } catch (ProfessorException e) {
@@ -57,7 +59,7 @@ public class ProfessorController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProfessorDTO> atualizar(@PathVariable Long id, @Valid @RequestBody ProfessorCadastroDTO dto) throws InvalidCredentialException {
+    public ResponseEntity<ProfessorDTO> atualizar(@PathVariable Long id, @Valid @RequestBody ProfessorAtualizacaoDTO dto) throws InvalidCredentialException {
         try {
             return ResponseEntity.ok(professorService.atualizar(id, dto));
         } 

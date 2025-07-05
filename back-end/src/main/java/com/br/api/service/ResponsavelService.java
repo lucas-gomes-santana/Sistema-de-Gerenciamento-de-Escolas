@@ -1,13 +1,16 @@
 package com.br.api.service;
 
 import com.br.api.dto.responsaveis.ResponsavelCadastroDTO;
+import com.br.api.dto.responsaveis.ResponsavelAtualizacaoDTO;
 import com.br.api.dto.responsaveis.ResponsaviesDTO;
+import com.br.api.dto.responsaveis.ResponsaveisDetalhesDTO;
 import com.br.api.exception.ResponsavelException;
 import com.br.api.mapper.ResponsavelMapper;
 import com.br.api.model.Responsavel;
 import com.br.api.repository.ResponsavelRepository;
 import com.br.api.repository.EnderecoRepository;
 import com.br.api.model.Endereco;
+import com.br.api.model.Endereco.TipoEntidade;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,6 +31,7 @@ public class ResponsavelService {
     private final PasswordEncoder passwordEncoder;
 
     public ResponsaviesDTO cadastrar(ResponsavelCadastroDTO dto) throws ResponsavelException {
+        // Verificar se CPF ou RG já existem
         if (responsavelRepository.existsByCpf(dto.cpf())) {
             throw new ResponsavelException("CPF já cadastrado");
         }
@@ -36,12 +40,25 @@ public class ResponsavelService {
             throw new ResponsavelException("RG já cadastrado");
         }
         
+        // Criar responsável usando o construtor com validações
         Responsavel responsavel = responsavelMapper.toEntity(dto);
-        if (responsavel.getEndereco() != null) {
-            Endereco endereco = responsavel.getEndereco();
+
+        // Primeiro salva o responsável para obter o ID
+        responsavel = responsavelRepository.save(responsavel);
+
+        // Salvar endereço se existir
+        if (dto.endereco() != null) {
+            Endereco endereco = new Endereco();
+            endereco.setNome_rua(dto.endereco().rua());
+            endereco.setNome_bairro(dto.endereco().bairro());
+            endereco.setCep(dto.endereco().cep());
+            endereco.setComplemento(dto.endereco().complemento());
+            endereco.setTipo_entidade(TipoEntidade.ADMIN); // Responsável é considerado ADMIN
+            endereco.setId_entidade(responsavel.getId_responsavies());
             endereco = enderecoRepository.save(endereco);
-            responsavel.setEndereco(endereco);
+            responsavel.definirEndereco(endereco);
         }
+
         responsavel = responsavelRepository.save(responsavel);
         return responsavelMapper.toDTO(responsavel);
     }
@@ -50,14 +67,35 @@ public class ResponsavelService {
         return responsavelRepository.findAll().stream().map(responsavelMapper::toDTO).toList();
     }
 
-    public ResponsaviesDTO buscarPorId(Long id) throws ResponsavelException {
-        Responsavel responsavel = responsavelRepository.findById(id).orElseThrow(() -> new ResponsavelException("Responsável não encontrado"));
-        return responsavelMapper.toDTO(responsavel);
+    public ResponsaveisDetalhesDTO buscarPorId(Long id) throws ResponsavelException {
+        Responsavel responsavel = responsavelRepository.findById(id)
+            .orElseThrow(() -> new ResponsavelException("Responsável não encontrado"));
+        return responsavelMapper.toDetalhesDTO(responsavel);
     }
 
-    public ResponsaviesDTO atualizar(Long id, ResponsavelCadastroDTO dto) throws ResponsavelException {
-        Responsavel responsavel = responsavelRepository.findById(id).orElseThrow(() -> new ResponsavelException("Responsável não encontrado"));
-        responsavelMapper.updateEntity(responsavel, dto);
+    public ResponsaviesDTO atualizar(Long id, ResponsavelAtualizacaoDTO dto) throws ResponsavelException {
+        Responsavel responsavel = responsavelRepository.findById(id)
+            .orElseThrow(() -> new ResponsavelException("Responsável não encontrado"));
+
+        // Atualiza dados básicos (sem dados sensíveis)
+        responsavel.atualizarDadosBasicos(dto.nome(), dto.telefone());
+
+        // Atualiza o endereço se fornecido
+        if (dto.endereco() != null) {
+            Endereco endereco = responsavel.getEndereco();
+            if (endereco == null) {
+                endereco = new Endereco();
+                endereco.setTipo_entidade(TipoEntidade.ADMIN);
+                endereco.setId_entidade(responsavel.getId_responsavies());
+            }
+            endereco.setNome_rua(dto.endereco().rua());
+            endereco.setNome_bairro(dto.endereco().bairro());
+            endereco.setCep(dto.endereco().cep());
+            endereco.setComplemento(dto.endereco().complemento());
+            endereco = enderecoRepository.save(endereco);
+            responsavel.definirEndereco(endereco);
+        }
+
         responsavel = responsavelRepository.save(responsavel);
         return responsavelMapper.toDTO(responsavel);
     }

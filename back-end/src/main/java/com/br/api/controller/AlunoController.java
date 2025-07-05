@@ -67,7 +67,7 @@ public class AlunoController {
     @PutMapping("/{id}")
     public ResponseEntity<AlunoDTO> atualizarAluno(
         @PathVariable Long id,
-        @Valid @RequestBody AlunoCadastroDTO dto
+        @Valid @RequestBody AlunoAtualizacaoDTO dto
     )
     throws AlunoException, TurmaException, InvalidCredentialException {
         return ResponseEntity.ok(alunoService.atualizar(id, dto));

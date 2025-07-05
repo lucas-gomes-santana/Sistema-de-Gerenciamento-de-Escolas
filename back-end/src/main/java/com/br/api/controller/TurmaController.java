@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.br.api.dto.turma.TurmaDTO;
+import com.br.api.dto.turma.TurmaDetalhesDTO;
 import com.br.api.exception.TurmaException;
 import com.br.api.dto.turma.TurmaCadastroDTO;
 import com.br.api.service.TurmaService;
@@ -39,6 +40,11 @@ public class TurmaController {
     @GetMapping("/{id}")
     public ResponseEntity<TurmaDTO> buscarPorId(@PathVariable Long id) throws TurmaException {
         return ResponseEntity.ok(turmaService.buscarPorId(id));
+    }
+
+    @GetMapping("/{id}/detalhes")
+    public ResponseEntity<TurmaDetalhesDTO> buscarDetalhesPorId(@PathVariable Long id) throws TurmaException {
+        return ResponseEntity.ok(turmaService.buscarDetalhesPorId(id));
     }
 
     @GetMapping
